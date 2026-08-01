@@ -1,0 +1,1348 @@
+---
+title: How to Build a Neobrutalism Website with Tailwind CSS v4 (Step-by-Step)
+slug: build-neobrutalism-website-tailwind-v4
+coverImage: https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/blogs/neobrutalism-tailwind-v4/cover.png
+description: Learn how to build a complete neobrutalist website from scratch using Tailwind CSS v4. This hands-on tutorial walks you through setting up, configuring, and building every component with code examples you can copy and paste.
+tags:
+  - tailwind css
+  - neobrutalism
+  - tutorial
+  - web development
+  - css
+author:
+  name: Imran Hossain
+  avatar: https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/people/imran.jpg
+  linkedin: faraazhossainimran
+
+status: draft
+publishedAt: 1 May, 2026
+---
+
+Alright, developers. Let's build something bold.
+
+<br />
+
+No theory. No fluff. Just you, me, and a terminal. By the end of this tutorial, you'll have a fully functional neobrutalist website built with Tailwind CSS v4.
+
+<br />
+
+We're talking:
+- Thick black borders
+- Hard drop shadows
+- Electric yellow accents
+- Chunky typography
+- Zero rounded corners
+
+<br />
+
+This isn't a "here's a component" tutorial. We're building an entire landing page from scratch—hero section, features, pricing, footer, the works. Every line of code explained. Every design decision justified.
+
+<br />
+
+Grab your coffee. Open your terminal. Let's get brutal.
+
+<br />
+<br />
+
+## What We're Building
+
+Before we start, here's what we're creating:
+
+<br />
+
+**A landing page for a fictional SaaS product called "BoldTask"**—a project management tool that doesn't look like every other project management tool.
+
+<br />
+
+The page will include:
+- Hero section with CTA
+- Feature cards
+- Pricing table
+- Testimonial section
+- Footer
+
+<br />
+
+All with that signature neobrutalist aesthetic: bold, high-contrast, and impossible to ignore.
+
+<br />
+
+**Tech stack:**
+- Tailwind CSS v4 (the latest and greatest)
+- HTML (or React/Next.js if you prefer)
+- Google Fonts (Archivo Black + Space Grotesk)
+
+<br />
+
+**Time to complete:** 45-60 minutes if you follow along
+
+<br />
+<br />
+
+## Step 1: Project Setup (5 minutes)
+
+Let's start from zero. I'm using a simple HTML setup for this tutorial, but you can easily adapt this to React, Next.js, or any framework.
+
+<br />
+
+### Create Your Project
+
+```bash
+mkdir neobrutalism-website
+cd neobrutalism-website
+```
+
+<br />
+
+### Initialize npm and Install Tailwind v4
+
+```bash
+npm init -y
+npm install tailwindcss@next @tailwindcss/vite@next
+```
+
+<br />
+
+Note: We're installing Tailwind v4 (currently in beta, but stable enough for production). The `@next` tag gets you v4.
+
+<br />
+
+### Create Project Structure
+
+```bash
+mkdir src
+touch src/index.html src/styles.css
+```
+
+<br />
+
+Your folder structure should look like this:
+
+```
+neobrutalism-website/
+├── src/
+│   ├── index.html
+│   └── styles.css
+├── package.json
+└── node_modules/
+```
+
+<br />
+<br />
+
+## Step 2: Configure Tailwind v4 (3 minutes)
+
+Tailwind v4 has a new, cleaner config system. Instead of `tailwind.config.js`, we configure everything in CSS.
+
+<br />
+
+### Create Your Styles File
+
+Open `src/styles.css` and add:
+
+```css
+@import "tailwindcss";
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Fonts */
+  --font-family-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-family-display: 'Archivo Black', ui-sans-serif, system-ui, sans-serif;
+
+  /* Colors - Neobrutalist Palette */
+  --color-brutal-yellow: #ffdb33;
+  --color-brutal-pink: #ff006e;
+  --color-brutal-cyan: #00f0ff;
+  --color-brutal-black: #000000;
+  --color-brutal-white: #ffffff;
+  --color-brutal-gray: #e5e5e5;
+
+  /* Border Radius - Zero for neobrutalism */
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+
+  /* Border Widths - Thick */
+  --border-width-default: 3px;
+  --border-width-thick: 4px;
+  --border-width-heavy: 6px;
+
+  /* Shadows - Hard offset shadows (no blur) */
+  --shadow-brutal-sm: 2px 2px 0 0 var(--color-brutal-black);
+  --shadow-brutal: 4px 4px 0 0 var(--color-brutal-black);
+  --shadow-brutal-md: 6px 6px 0 0 var(--color-brutal-black);
+  --shadow-brutal-lg: 8px 8px 0 0 var(--color-brutal-black);
+  --shadow-brutal-xl: 10px 10px 0 0 var(--color-brutal-black);
+
+  /* Spacing adjustments */
+  --spacing-brutal: 1.5rem;
+}
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-brutal-white);
+  color: var(--color-brutal-black);
+  line-height: 1.6;
+}
+
+/* Custom Utility Classes */
+.border-brutal {
+  border: 4px solid var(--color-brutal-black);
+}
+
+.border-brutal-thick {
+  border: 6px solid var(--color-brutal-black);
+}
+
+.shadow-brutal {
+  box-shadow: var(--shadow-brutal);
+}
+
+.shadow-brutal-lg {
+  box-shadow: var(--shadow-brutal-lg);
+}
+
+.shadow-brutal-xl {
+  box-shadow: var(--shadow-brutal-xl);
+}
+
+/* Hover effect - shadow movement */
+.btn-brutal {
+  transition: all 0.15s ease;
+}
+
+.btn-brutal:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 var(--color-brutal-black);
+}
+
+.btn-brutal:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0 0 var(--color-brutal-black);
+}
+```
+
+<br />
+
+**What we just did:**
+- Set up custom color palette (black, white, yellow, pink, cyan)
+- Killed all border-radius values (neobrutalism = sharp edges)
+- Created hard shadow utilities (offset with no blur)
+- Added custom button hover effects that mimic the shadow "pressing"
+
+<br />
+<br />
+
+## Step 3: HTML Structure (5 minutes)
+
+Create the basic HTML structure. Open `src/index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BoldTask - Project Management That Doesn't Suck</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="border-b-4 border-brutal-black bg-brutal-white">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-2xl font-display">BoldTask</div>
+      <div class="hidden md:flex gap-8">
+        <a href="#features" class="font-bold hover:text-brutal-pink transition-colors">Features</a>
+        <a href="#pricing" class="font-bold hover:text-brutal-pink transition-colors">Pricing</a>
+        <a href="#about" class="font-bold hover:text-brutal-pink transition-colors">About</a>
+      </div>
+      <button class="bg-brutal-yellow border-brutal shadow-brutal px-6 py-2 font-bold uppercase btn-brutal">
+        Sign Up
+      </button>
+    </div>
+  </nav>
+
+  <!-- We'll add more sections here -->
+
+  <main>
+    <!-- Hero section will go here -->
+    <!-- Features section will go here -->
+    <!-- Pricing section will go here -->
+    <!-- Testimonial section will go here -->
+  </main>
+
+  <!-- Footer will go here -->
+
+</body>
+</html>
+```
+
+<br />
+
+### Set Up Dev Server
+
+We need a way to preview our work. Let's use Vite:
+
+```bash
+npm install vite
+```
+
+<br />
+
+Add this script to your `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "vite src"
+  }
+}
+```
+
+<br />
+
+Now run:
+
+```bash
+npm run dev
+```
+
+<br />
+
+Open `http://localhost:5173` in your browser. You should see a basic navigation bar with the BoldTask branding.
+
+<br />
+<br />
+
+## Step 4: Build the Hero Section (10 minutes)
+
+Now for the star of the show. The hero section needs to be BOLD.
+
+<br />
+
+Add this right after the `<main>` tag:
+
+```html
+<!-- Hero Section -->
+<section class="bg-brutal-yellow min-h-screen flex items-center justify-center px-6 py-20">
+  <div class="max-w-6xl w-full">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+
+      <!-- Left Column - Text -->
+      <div>
+        <h1 class="font-display text-6xl md:text-8xl uppercase leading-none mb-6">
+          Task Management That Doesn't Bore You to Death
+        </h1>
+        <p class="text-xl md:text-2xl font-bold mb-8 bg-brutal-white border-brutal shadow-brutal-lg p-6">
+          Stop using the same gray dashboard as everyone else.
+          BoldTask gives you project management with personality.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button class="bg-brutal-black text-brutal-yellow border-brutal shadow-brutal-lg
+                         px-8 py-4 font-bold text-lg uppercase btn-brutal">
+            Start Free Trial →
+          </button>
+          <button class="bg-brutal-white border-brutal shadow-brutal-lg
+                         px-8 py-4 font-bold text-lg uppercase btn-brutal">
+            Watch Demo
+          </button>
+        </div>
+
+        <!-- Social Proof -->
+        <div class="mt-12 flex items-center gap-8">
+          <div class="text-center">
+            <div class="text-4xl font-display">10K+</div>
+            <div class="text-sm font-bold">Active Users</div>
+          </div>
+          <div class="h-12 w-1 bg-brutal-black"></div>
+          <div class="text-center">
+            <div class="text-4xl font-display">4.9★</div>
+            <div class="text-sm font-bold">User Rating</div>
+          </div>
+          <div class="h-12 w-1 bg-brutal-black"></div>
+          <div class="text-center">
+            <div class="text-4xl font-display">24/7</div>
+            <div class="text-sm font-bold">Support</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Visual Element -->
+      <div class="relative">
+        <!-- Main Card -->
+        <div class="bg-brutal-white border-brutal-thick shadow-brutal-xl p-8 relative z-10">
+          <div class="bg-brutal-pink h-4 w-20 mb-4"></div>
+          <div class="h-3 bg-brutal-gray mb-2"></div>
+          <div class="h-3 bg-brutal-gray w-3/4 mb-6"></div>
+
+          <!-- Task Items -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 p-3 bg-brutal-yellow border-brutal">
+              <div class="w-5 h-5 border-brutal bg-brutal-black"></div>
+              <div class="h-2 bg-brutal-black w-full"></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-brutal-white border-brutal">
+              <div class="w-5 h-5 border-brutal"></div>
+              <div class="h-2 bg-brutal-gray w-4/5"></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-brutal-white border-brutal">
+              <div class="w-5 h-5 border-brutal"></div>
+              <div class="h-2 bg-brutal-gray w-3/4"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating accent card -->
+        <div class="absolute -bottom-8 -right-8 bg-brutal-cyan border-brutal-thick
+                    shadow-brutal-lg p-6 w-40 text-center">
+          <div class="text-3xl font-display mb-2">+47</div>
+          <div class="text-xs font-bold">Tasks Done Today</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+```
+
+<br />
+
+**What we built:**
+- Full-screen yellow background (instant impact)
+- Massive headline using Archivo Black
+- Content box with thick border and hard shadow
+- CTAs with hover effects (shadow moves when you hover)
+- Social proof metrics
+- Visual mockup of the product (abstract representation)
+- Floating accent card for depth
+
+<br />
+
+**Design decisions:**
+- Yellow background = high energy, impossible to ignore
+- White content box = creates contrast and hierarchy
+- Black CTA on yellow = maximum visibility
+- Floating cyan card = adds asymmetry (neobrutalist principle)
+
+<br />
+<br />
+
+## Step 5: Features Section (10 minutes)
+
+Let's build feature cards. Add this after the hero section:
+
+```html
+<!-- Features Section -->
+<section class="bg-brutal-white py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="font-display text-5xl md:text-7xl uppercase mb-6">
+        Why BoldTask?
+      </h2>
+      <p class="text-xl md:text-2xl font-bold max-w-3xl mx-auto">
+        Because your productivity tool shouldn't put you to sleep
+      </p>
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- Feature 1 -->
+      <div class="bg-brutal-pink text-brutal-white border-brutal-thick shadow-brutal-lg p-8
+                  hover:-translate-y-2 transition-transform">
+        <div class="text-6xl font-display mb-4">⚡</div>
+        <h3 class="font-display text-2xl uppercase mb-4">Lightning Fast</h3>
+        <p class="font-bold">
+          No lag. No loading. No waiting. Your tasks appear instantly
+          because we don't bloat our code with unnecessary animations.
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="bg-brutal-cyan border-brutal-thick shadow-brutal-lg p-8
+                  hover:-translate-y-2 transition-transform">
+        <div class="text-6xl font-display mb-4">🎨</div>
+        <h3 class="font-display text-2xl uppercase mb-4">Actually Unique</h3>
+        <p class="font-bold">
+          Tired of boring dashboards? We built something you'll actually
+          want to open. Bold colors, zero BS.
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="bg-brutal-yellow border-brutal-thick shadow-brutal-lg p-8
+                  hover:-translate-y-2 transition-transform">
+        <div class="text-6xl font-display mb-4">🔒</div>
+        <h3 class="font-display text-2xl uppercase mb-4">Privacy First</h3>
+        <p class="font-bold">
+          Your data stays yours. No tracking. No selling. No corporate
+          surveillance. Just your tasks, secured.
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="bg-brutal-white border-brutal-thick shadow-brutal-lg p-8
+                  hover:-translate-y-2 transition-transform">
+        <div class="text-6xl font-display mb-4">📱</div>
+        <h3 class="font-display text-2xl uppercase mb-4">Mobile Ready</h3>
+        <p class="font-bold">
+          Works on your phone, tablet, or desktop. Same bold design,
+          same fast performance everywhere.
+        </p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="bg-brutal-white border-brutal-thick shadow-brutal-lg p-8
+                  hover:-translate-y-2 transition-transform">
+        <div class="text-6xl font-display mb-4">🤝</div>
+        <h3 class="font-display text-2xl uppercase mb-4">Team Friendly</h3>
+        <p class="font-bold">
+          Invite your team. Assign tasks. Track progress. All without
+          the corporate bloat of "enterprise" tools.
+        </p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="bg-brutal-white border-brutal-thick shadow-brutal-lg p-8
+                  hover:-translate-y-2 transition-transform">
+        <div class="text-6xl font-display mb-4">💰</div>
+        <h3 class="font-display text-2xl uppercase mb-4">Fair Pricing</h3>
+        <p class="font-bold">
+          No hidden fees. No "contact sales." Just honest pricing that
+          makes sense. Pay for what you use.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+```
+
+<br />
+
+**What we built:**
+- 6 feature cards in a responsive grid
+- Color blocking (pink, cyan, yellow, white) for visual interest
+- Emoji icons (simple, playful, on-brand)
+- Hover effect (cards lift on hover)
+- Consistent thick borders and hard shadows
+
+<br />
+
+**Design pattern:**
+Notice how the first three cards use accent colors (pink, cyan, yellow) while the bottom three use white? This creates a visual hierarchy—the top row gets more attention.
+
+<br />
+<br />
+
+## Step 6: Pricing Section (12 minutes)
+
+Pricing tables are crucial. Let's make them impossible to miss:
+
+```html
+<!-- Pricing Section -->
+<section id="pricing" class="bg-brutal-black text-brutal-white py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="font-display text-5xl md:text-7xl uppercase mb-6">
+        Simple Pricing
+      </h2>
+      <p class="text-xl md:text-2xl font-bold max-w-2xl mx-auto">
+        No tricks. No hidden costs. Just pick a plan and start shipping.
+      </p>
+    </div>
+
+    <!-- Pricing Grid -->
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- Free Plan -->
+      <div class="bg-brutal-white text-brutal-black border-brutal-thick shadow-brutal-lg p-8">
+        <div class="mb-6">
+          <div class="text-sm font-bold uppercase mb-2 text-gray-600">For Individuals</div>
+          <h3 class="font-display text-4xl uppercase mb-4">Free</h3>
+          <div class="text-5xl font-display mb-2">$0</div>
+          <div class="text-sm font-bold text-gray-600">Forever free</div>
+        </div>
+
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-yellow text-xl">✓</span>
+            <span class="font-bold">Up to 10 projects</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-yellow text-xl">✓</span>
+            <span class="font-bold">Unlimited tasks</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-yellow text-xl">✓</span>
+            <span class="font-bold">Mobile apps</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-gray-400 text-xl">✗</span>
+            <span class="font-bold text-gray-400">Team collaboration</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-gray-400 text-xl">✗</span>
+            <span class="font-bold text-gray-400">Priority support</span>
+          </li>
+        </ul>
+
+        <button class="w-full bg-brutal-white border-brutal shadow-brutal
+                       px-6 py-3 font-bold uppercase btn-brutal">
+          Start Free
+        </button>
+      </div>
+
+      <!-- Pro Plan (Highlighted) -->
+      <div class="bg-brutal-yellow text-brutal-black border-brutal-thick shadow-brutal-xl p-8
+                  relative transform md:-translate-y-4">
+        <!-- Popular Badge -->
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brutal-pink text-brutal-white
+                    border-brutal px-6 py-2 font-bold uppercase text-sm">
+          Most Popular
+        </div>
+
+        <div class="mb-6 mt-4">
+          <div class="text-sm font-bold uppercase mb-2">For Professionals</div>
+          <h3 class="font-display text-4xl uppercase mb-4">Pro</h3>
+          <div class="text-5xl font-display mb-2">$12</div>
+          <div class="text-sm font-bold">Per month</div>
+        </div>
+
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Unlimited projects</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Unlimited tasks</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Mobile apps</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Team collaboration (5 members)</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Priority support</span>
+          </li>
+        </ul>
+
+        <button class="w-full bg-brutal-black text-brutal-yellow border-brutal shadow-brutal-lg
+                       px-6 py-3 font-bold uppercase btn-brutal">
+          Get Pro →
+        </button>
+      </div>
+
+      <!-- Team Plan -->
+      <div class="bg-brutal-cyan text-brutal-black border-brutal-thick shadow-brutal-lg p-8">
+        <div class="mb-6">
+          <div class="text-sm font-bold uppercase mb-2">For Teams</div>
+          <h3 class="font-display text-4xl uppercase mb-4">Team</h3>
+          <div class="text-5xl font-display mb-2">$29</div>
+          <div class="text-sm font-bold">Per month</div>
+        </div>
+
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Everything in Pro</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Unlimited team members</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Advanced analytics</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">Custom integrations</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brutal-black text-xl">✓</span>
+            <span class="font-bold">24/7 priority support</span>
+          </li>
+        </ul>
+
+        <button class="w-full bg-brutal-black text-brutal-cyan border-brutal shadow-brutal
+                       px-6 py-3 font-bold uppercase btn-brutal">
+          Get Team
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Money Back Guarantee -->
+    <div class="mt-16 text-center">
+      <div class="inline-block bg-brutal-yellow text-brutal-black border-brutal-thick
+                  shadow-brutal-lg px-8 py-4 font-bold text-lg">
+        💰 30-Day Money Back Guarantee - No Questions Asked
+      </div>
+    </div>
+
+  </div>
+</section>
+```
+
+<br />
+
+**What we built:**
+- Three pricing tiers with clear differentiation
+- Color coding (white = free, yellow = popular, cyan = premium)
+- Middle card elevated and larger (draws attention to recommended plan)
+- "Most Popular" badge on the Pro plan
+- Feature checkmarks (✓ and ✗) for clarity
+- Money-back guarantee for trust
+
+<br />
+
+**Design strategy:**
+- Black background makes the colored cards POP
+- Middle card slightly raised creates visual hierarchy
+- Consistent CTA placement makes comparison easy
+- Different colored CTAs match the card background
+
+<br />
+<br />
+
+## Step 7: Testimonial Section (8 minutes)
+
+Social proof sells. Let's add testimonials:
+
+```html
+<!-- Testimonial Section -->
+<section class="bg-brutal-gray py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="font-display text-5xl md:text-7xl uppercase mb-6">
+        People Love It
+      </h2>
+      <p class="text-xl md:text-2xl font-bold max-w-2xl mx-auto">
+        Don't take our word for it. Here's what actual users say.
+      </p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Testimonial 1 -->
+      <div class="bg-brutal-white border-brutal shadow-brutal-lg p-6">
+        <div class="text-brutal-yellow text-2xl mb-4">★★★★★</div>
+        <p class="font-bold mb-6 text-lg">
+          "Finally, a task manager that doesn't look like it was designed
+          by accountants. BoldTask actually makes me WANT to check my tasks."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-brutal-pink border-brutal"></div>
+          <div>
+            <div class="font-bold">Sarah Chen</div>
+            <div class="text-sm text-gray-600">Product Designer</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div class="bg-brutal-white border-brutal shadow-brutal-lg p-6">
+        <div class="text-brutal-yellow text-2xl mb-4">★★★★★</div>
+        <p class="font-bold mb-6 text-lg">
+          "I switched from Asana and never looked back. BoldTask is faster,
+          cleaner, and way more fun to use. Plus it's actually affordable."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-brutal-cyan border-brutal"></div>
+          <div>
+            <div class="font-bold">Marcus Rodriguez</div>
+            <div class="text-sm text-gray-600">Startup Founder</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 3 -->
+      <div class="bg-brutal-white border-brutal shadow-brutal-lg p-6">
+        <div class="text-brutal-yellow text-2xl mb-4">★★★★★</div>
+        <p class="font-bold mb-6 text-lg">
+          "Our whole team uses it now. The bold design actually helps us
+          stay focused. Weird but true."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-brutal-yellow border-brutal"></div>
+          <div>
+            <div class="font-bold">Priya Kapoor</div>
+            <div class="text-sm text-gray-600">Engineering Manager</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+```
+
+<br />
+
+**What we built:**
+- Three testimonial cards with consistent styling
+- Star ratings (yellow = attention)
+- User avatars (abstract colored squares instead of photos)
+- Names and titles for credibility
+
+<br />
+
+**Why abstract avatars?**
+Real photos can feel corporate. Colored squares maintain the playful, geometric neobrutalist aesthetic.
+
+<br />
+<br />
+
+## Step 8: Footer (5 minutes)
+
+Every website needs a footer. Let's make ours bold:
+
+```html
+<!-- Footer -->
+<footer class="bg-brutal-black text-brutal-white border-t-4 border-brutal-white py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="grid md:grid-cols-4 gap-12 mb-12">
+
+      <!-- Brand -->
+      <div>
+        <div class="font-display text-3xl mb-4">BoldTask</div>
+        <p class="font-bold text-gray-300">
+          Project management that doesn't suck.
+        </p>
+      </div>
+
+      <!-- Product Links -->
+      <div>
+        <h4 class="font-display text-lg uppercase mb-4">Product</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Features</a></li>
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Pricing</a></li>
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Roadmap</a></li>
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Changelog</a></li>
+        </ul>
+      </div>
+
+      <!-- Company Links -->
+      <div>
+        <h4 class="font-display text-lg uppercase mb-4">Company</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">About</a></li>
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Blog</a></li>
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Careers</a></li>
+          <li><a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div>
+        <h4 class="font-display text-lg uppercase mb-4">Stay Updated</h4>
+        <p class="font-bold mb-4 text-gray-300">Get updates about new features.</p>
+        <div class="flex gap-2">
+          <input
+            type="email"
+            placeholder="Your email"
+            class="flex-1 bg-brutal-white text-brutal-black border-brutal px-4 py-2
+                   font-bold placeholder:text-gray-400"
+          />
+          <button class="bg-brutal-yellow text-brutal-black border-brutal shadow-brutal
+                         px-4 py-2 font-bold uppercase btn-brutal">
+            →
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="border-t-2 border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="font-bold text-gray-400">
+        © 2026 BoldTask. All rights reserved.
+      </div>
+      <div class="flex gap-6">
+        <a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Privacy</a>
+        <a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Terms</a>
+        <a href="#" class="font-bold hover:text-brutal-yellow transition-colors">Twitter</a>
+        <a href="#" class="font-bold hover:text-brutal-yellow transition-colors">GitHub</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+```
+
+<br />
+
+**What we built:**
+- Four-column footer layout
+- Brand, navigation, and newsletter signup
+- Hover effects (links turn yellow)
+- Email input with brutal styling
+- Bottom copyright bar
+
+<br />
+<br />
+
+## Step 9: Adding Polish and Interactions (5 minutes)
+
+Let's add some final touches to make the site feel polished.
+
+<br />
+
+### Smooth Scrolling
+
+Add this to your `src/styles.css`:
+
+```css
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar (optional but on-brand) */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-brutal-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brutal-black);
+  border: 2px solid var(--color-brutal-gray);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brutal-yellow);
+}
+```
+
+<br />
+
+### Mobile Menu Toggle
+
+Add this JavaScript before the closing `</body>` tag:
+
+```html
+<script>
+  // Mobile menu toggle
+  const mobileMenuButton = document.createElement('button');
+  mobileMenuButton.className = 'md:hidden border-brutal bg-brutal-yellow px-4 py-2 font-bold';
+  mobileMenuButton.textContent = 'MENU';
+
+  const nav = document.querySelector('nav > div');
+  const navLinks = nav.querySelector('.hidden');
+
+  // This is a simple example - you'd want to make this more robust
+  mobileMenuButton.addEventListener('click', () => {
+    navLinks.classList.toggle('hidden');
+    navLinks.classList.toggle('flex');
+  });
+
+  // Add button to nav (you'd do this more elegantly in production)
+</script>
+```
+
+<br />
+
+### Performance Optimization
+
+Add these meta tags to your `<head>`:
+
+```html
+<!-- Preload critical fonts -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap">
+
+<!-- Meta tags for SEO and social -->
+<meta name="description" content="BoldTask - Project management that doesn't suck. Bold design, fast performance, fair pricing.">
+<meta property="og:title" content="BoldTask - Project Management That Doesn't Suck">
+<meta property="og:description" content="Stop using boring task managers. BoldTask gives you project management with personality.">
+<meta property="og:image" content="/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+```
+
+<br />
+<br />
+
+## Step 10: Testing and Refinements (5 minutes)
+
+Now test your website:
+
+<br />
+
+### Responsive Testing
+
+Open DevTools (F12) and test these breakpoints:
+- Mobile (375px)
+- Tablet (768px)
+- Desktop (1280px)
+
+<br />
+
+Make sure:
+- Text is readable at all sizes
+- Buttons are tappable on mobile (at least 44px tall)
+- Grid layouts collapse correctly
+- Shadows don't get cut off on small screens
+
+<br />
+
+### Accessibility Check
+
+Run through this checklist:
+- [ ] All interactive elements are keyboard accessible (Tab through the page)
+- [ ] Color contrast meets WCAG AA standards (black on white ✓, yellow on white ✓)
+- [ ] Images have alt text (we used divs, but if you add images, add alt text)
+- [ ] Form inputs have labels
+- [ ] Focus states are visible
+
+<br />
+
+### Performance Check
+
+Open Lighthouse in Chrome DevTools and run an audit. You should see:
+- Performance: 90+ (minimal CSS, no heavy frameworks)
+- Accessibility: 90+ (high contrast, semantic HTML)
+- Best Practices: 90+
+- SEO: 90+
+
+<br />
+
+If scores are low, common fixes:
+- Add `width` and `height` to images
+- Minify CSS in production
+- Enable caching headers
+- Compress images
+
+<br />
+<br />
+
+## Bonus: Converting to React/Next.js
+
+Want to use this in a React app? Here's how to convert the hero section:
+
+<br />
+
+```tsx
+// components/Hero.tsx
+export default function Hero() {
+  return (
+    <section className="bg-brutal-yellow min-h-screen flex items-center justify-center px-6 py-20">
+      <div className="max-w-6xl w-full">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+
+          {/* Left Column */}
+          <div>
+            <h1 className="font-display text-6xl md:text-8xl uppercase leading-none mb-6">
+              Task Management That Doesn't Bore You to Death
+            </h1>
+            <p className="text-xl md:text-2xl font-bold mb-8 bg-brutal-white border-brutal shadow-brutal-lg p-6">
+              Stop using the same gray dashboard as everyone else.
+              BoldTask gives you project management with personality.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button className="bg-brutal-black text-brutal-yellow border-brutal shadow-brutal-lg
+                               px-8 py-4 font-bold text-lg uppercase btn-brutal">
+                Start Free Trial →
+              </button>
+              <button className="bg-brutal-white border-brutal shadow-brutal-lg
+                               px-8 py-4 font-bold text-lg uppercase btn-brutal">
+                Watch Demo
+              </button>
+            </div>
+
+            {/* Social Proof */}
+            <div className="mt-12 flex items-center gap-8">
+              <div className="text-center">
+                <div className="text-4xl font-display">10K+</div>
+                <div className="text-sm font-bold">Active Users</div>
+              </div>
+              <div className="h-12 w-1 bg-brutal-black"></div>
+              <div className="text-center">
+                <div className="text-4xl font-display">4.9★</div>
+                <div className="text-sm font-bold">User Rating</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Visual */}
+          <div className="relative">
+            <div className="bg-brutal-white border-brutal-thick shadow-brutal-xl p-8 relative z-10">
+              {/* Task mockup */}
+              <div className="bg-brutal-pink h-4 w-20 mb-4"></div>
+              <div className="h-3 bg-brutal-gray mb-2"></div>
+              <div className="h-3 bg-brutal-gray w-3/4 mb-6"></div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-brutal-yellow border-brutal">
+                  <div className="w-5 h-5 border-brutal bg-brutal-black"></div>
+                  <div className="h-2 bg-brutal-black w-full"></div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-brutal-white border-brutal">
+                  <div className="w-5 h-5 border-brutal"></div>
+                  <div className="h-2 bg-brutal-gray w-4/5"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute -bottom-8 -right-8 bg-brutal-cyan border-brutal-thick
+                          shadow-brutal-lg p-6 w-40 text-center">
+              <div className="text-3xl font-display mb-2">+47</div>
+              <div className="text-xs font-bold">Tasks Done Today</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+```
+
+<br />
+
+Then in your `tailwind.config.ts`:
+
+```typescript
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['var(--font-space-grotesk)', 'sans-serif'],
+        display: ['var(--font-archivo-black)', 'sans-serif'],
+      },
+      colors: {
+        'brutal-yellow': '#ffdb33',
+        'brutal-pink': '#ff006e',
+        'brutal-cyan': '#00f0ff',
+        'brutal-black': '#000000',
+        'brutal-white': '#ffffff',
+        'brutal-gray': '#e5e5e5',
+      },
+      boxShadow: {
+        'brutal-sm': '2px 2px 0 0 #000',
+        'brutal': '4px 4px 0 0 #000',
+        'brutal-lg': '6px 6px 0 0 #000',
+        'brutal-xl': '8px 8px 0 0 #000',
+      },
+      borderWidth: {
+        'brutal': '4px',
+        'brutal-thick': '6px',
+      },
+    },
+  },
+  plugins: [],
+}
+
+export default config
+```
+
+<br />
+<br />
+
+## Common Mistakes and How to Avoid Them
+
+After building dozens of neobrutalist sites, here are the pitfalls I see most often:
+
+<br />
+
+### 1. Inconsistent Border Widths
+
+**Mistake:** Using 2px borders on some elements, 5px on others, 3px somewhere else.
+
+**Fix:** Pick 2-3 border widths (e.g., 3px standard, 4px for emphasis, 6px for major elements) and stick to them throughout.
+
+<br />
+
+### 2. Forgetting Mobile Shadow Offsets
+
+**Mistake:** 10px shadow offsets on mobile that get cut off or create horizontal scroll.
+
+**Fix:** Use responsive shadow utilities:
+```css
+.card {
+  box-shadow: 4px 4px 0 0 #000;
+}
+
+@media (min-width: 768px) {
+  .card {
+    box-shadow: 8px 8px 0 0 #000;
+  }
+}
+```
+
+<br />
+
+### 3. Too Many Accent Colors
+
+**Mistake:** Using 5+ colors thinking "more = more brutal."
+
+**Fix:** Stick to black + white + 2-3 accent colors max. Our palette uses yellow, pink, and cyan—that's already pushing it.
+
+<br />
+
+### 4. Neglecting Accessibility
+
+**Mistake:** Yellow text on white background (unreadable), no focus states, poor contrast.
+
+**Fix:** Always test contrast. Use black text on yellow/white backgrounds, white text on black/dark backgrounds.
+
+<br />
+
+### 5. Soft Shadows Sneaking In
+
+**Mistake:** Accidentally using Tailwind's default shadows (`shadow-lg`) which have blur.
+
+**Fix:** Create custom shadow utilities and disable default shadows if needed.
+
+<br />
+<br />
+
+## Next Steps and Resources
+
+Congrats! You just built a complete neobrutalist website from scratch.
+
+<br />
+
+### What to Do Next
+
+**1. Deploy It**
+```bash
+# Build for production
+npm run build
+
+# Deploy to Vercel, Netlify, or wherever
+```
+
+<br />
+
+**2. Add Functionality**
+- Connect the newsletter form to a service (ConvertKit, Mailchimp)
+- Implement the pricing CTAs with Stripe
+- Add analytics (Plausible, Fathom)
+
+<br />
+
+**3. Expand the Design System**
+- Create more components (modals, dropdowns, tooltips)
+- Build additional pages (about, blog, contact)
+- Add dark mode (neobrutalism works great in dark mode too)
+
+<br />
+
+**4. Optimize Further**
+- Minify CSS and HTML
+- Add image optimization
+- Implement caching strategies
+- Consider a static site generator for even better performance
+
+<br />
+
+### Helpful Resources
+
+**Design Inspiration:**
+- [Brutalist Websites](https://brutalistwebsites.com) - Curated collection
+- [Gumroad](https://gumroad.com) - Neobrutalism done right
+- [Feastables](https://feastables.com) - Playful neobrutalist e-commerce
+
+<br />
+
+**Tools:**
+- [RetroUI](https://retroui.dev) - Pre-built neobrutalist components
+- [Tailwind CSS v4 Docs](https://tailwindcss.com) - Official documentation
+- [Google Fonts](https://fonts.google.com) - Free fonts (Archivo Black, Space Grotesk)
+
+<br />
+
+**Color Palette Generators:**
+- [Coolors](https://coolors.co) - Generate color schemes
+- [Adobe Color](https://color.adobe.com) - Color wheel and palette tools
+
+<br />
+<br />
+
+## Final Thoughts
+
+You just built a neobrutalist website from zero to deployed in under an hour. That's pretty damn impressive.
+
+<br />
+
+**Key takeaways:**
+- Neobrutalism = thick borders + hard shadows + bold colors + zero border-radius
+- Tailwind v4's `@theme` directive makes customization cleaner
+- Consistency is crucial (border widths, shadows, colors)
+- Accessibility still matters (high contrast helps)
+- Start with a solid design system, then build components
+
+<br />
+
+This site isn't just a demo—it's a template you can adapt for real projects. Change the colors, swap the fonts, adjust the shadows, make it yours.
+
+<br />
+
+The best part about neobrutalism? It's forgiving. Imperfection is part of the aesthetic. Your slightly misaligned border or off-center element? That's not a bug, it's character.
+
+<br />
+
+Now go build something bold that doesn't look like everyone else's portfolio/SaaS/landing page.
+
+<br />
+
+And if you want pre-built components so you can move even faster, check out [RetroUI](https://retroui.dev). It's this aesthetic, packaged as copy-paste components.
+
+<br />
+
+Happy building. 🚀
+
+<br />
+<br />
+
+---
+
+<br />
+
+**Have questions?** Drop a comment or reach out on Twitter. I love seeing what people build with this style.
+
+**Want the full code?** The complete HTML file is available as a [GitHub Gist](https://gist.github.com) (link in comments).
+
+**Found this helpful?** Share it with a developer who needs to escape the boring design trap.

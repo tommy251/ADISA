@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "---Guide---",
+    "index",
+    "installation",
+    "accessibility",
+    "mcp",
+    "changelog",
+    "license",
+    "troubleshooting",
+    "newsletter",
+    "credits",
+    "---Registry---",
+    "ui",
+    "[Components](https://ui.unlumen.com/components)"
+  ]
+}

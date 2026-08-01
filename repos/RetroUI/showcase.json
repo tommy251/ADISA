@@ -1,0 +1,56 @@
+{
+    "advibly.com": {
+        "name": "Advibly",
+        "url": "https://advibly.com",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/advibly.com.png",
+        "color": "red-200"
+    },
+    "brijeshmarch16.vercel.app": {
+        "name": "Brijesh Portfolio",
+        "url": "https://brijeshmarch16.vercel.app",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/brijeshmarch16.png",
+        "color": "yellow-200"
+    },
+    "buildersguild.space": {
+        "name": "Builders Guild",
+        "url": "https://buildersguild.space",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/buildersguild.space.png",
+        "color": "orange-200"
+    },
+    "codeinpublic.com": {
+        "name": "Code in Public",
+        "url": "https://codeinpublic.com",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/codeinpublic.jpg",
+        "color": "purple-200"
+    },
+    "fplradar.com": {
+        "name": "FPL Radar",
+        "url": "https://fplradar.com",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/fplradar.com.png",
+        "color": "green-200"
+    },
+    "pouf.chat": {
+        "name": "Pouf Chat",
+        "url": "https://pouf.chat",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/pouf.chat.png",
+        "color": "purple-200"
+    },
+    "rewardkitty.com": {
+        "name": "Reward Kitty",
+        "url": "https://rewardkitty.com",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/rewardkitty.com.png",
+        "color": "blue-200"
+    },
+    "startcod.ing": {
+        "name": "Start Coding",
+        "url": "https://startcoding.ing",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/startcod.ing.png",
+        "color": "yellow-200"
+    },
+    "vanikya.ai": {
+        "name": "Vanikya AI",
+        "url": "https://vanikya.ai",
+        "cover": "https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/showcase/vanikya.ai.png",
+        "color": "green-200"
+    }
+}

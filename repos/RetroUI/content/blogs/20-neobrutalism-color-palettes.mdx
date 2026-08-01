@@ -1,0 +1,1106 @@
+---
+title: 20 Neobrutalism Color Palettes with Hex Codes (Copy & Paste Ready)
+slug: 20-neobrutalism-color-palettes
+coverImage: https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/blogs/neobrutalism-color-palettes/cover.png
+description: Struggling to pick colors for your neobrutalist design? Here are 20 battle-tested color palettes with exact hex codes you can copy and paste. From classic yellow and black to bold lime and pink combinations.
+tags:
+  - neobrutalism
+  - color palettes
+  - design
+  - web design
+  - css
+author:
+  name: Imran Hossain
+  avatar: https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/people/imran.jpg
+  linkedin: faraazhossainimran
+
+status: draft
+publishedAt: 1 May, 2026
+---
+
+Let's be honest: picking colors for a neobrutalist design can feel overwhelming.
+
+<br />
+
+You know you need bold, high-contrast colors. But which bold colors? How many? Which ones work together without looking like a kindergarten art project gone wrong?
+
+<br />
+
+I've built dozens of neobrutalist sites, and color selection is where most people get stuck. So I'm handing you 20 ready-to-use color palettes—each with exact hex codes, usage guidelines, and real-world context.
+
+<br />
+
+No theory. No color wheel lectures. Just copy the hex codes and start building.
+
+<br />
+
+Let's dive in.
+
+<br />
+<br />
+
+## How to Use These Palettes
+
+Before we get to the colors, here's how to think about neobrutalist color systems:
+
+<br />
+
+**Structure of a Neobrutalist Palette:**
+- **Base:** Black or very dark (for borders, text, shadows)
+- **Background:** White or very light (for cards, main background)
+- **Primary:** Your main accent color (CTAs, headers, emphasis)
+- **Secondary:** Supporting accent (usually 1-2 additional colors)
+- **Accents:** Additional pops of color (optional, use sparingly)
+
+<br />
+
+**Key Principles:**
+1. **High contrast is mandatory** - Black and white should anchor your palette
+2. **Saturation over subtlety** - No pastels, no muted tones (except backgrounds)
+3. **Limit accent colors** - 1-3 vibrant accents maximum
+4. **Don't fear boldness** - If it feels too safe, it's not brutal enough
+
+<br />
+
+Now, let's get to the palettes.
+
+<br />
+<br />
+
+## Classic Neobrutalist Palettes
+
+These are the timeless combinations that define the aesthetic.
+
+<br />
+
+### 1. Electric Yellow
+
+**The OG neobrutalist palette. If you only learn one, learn this.**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #FFDB33
+--primary-hover: #FFCC00
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Tech products and SaaS
+- Anything that needs attention and energy
+- Your first neobrutalist project
+
+<br />
+
+**Why it works:**
+Yellow on white creates maximum visibility. Black borders and text provide structure. This is RetroUI's default palette for a reason—it's nearly impossible to screw up.
+
+<br />
+
+**Example usage:**
+```tsx
+// Primary CTA button
+<button className="bg-[#FFDB33] text-[#000000] border-4 border-[#000000]
+                   shadow-[6px_6px_0_0_#000000] px-8 py-4 font-bold">
+  Get Started
+</button>
+```
+
+<br />
+
+**Real-world example:** Gumroad uses a variation of this palette throughout their interface.
+
+<br />
+<br />
+
+### 2. Hot Pink Punch
+
+**For brands with attitude and energy.**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #FF006E
+--secondary: #00F0FF
+--border: #000000
+--card: #FFFFFF
+--accent: #FFDB33
+```
+
+<br />
+
+**When to use:**
+- Creative agencies
+- Fashion and streetwear brands
+- Youth-focused products
+- Anything anti-corporate
+
+<br />
+
+**Why it works:**
+Hot pink demands attention. Paired with cyan creates a retro-futuristic vibe. The yellow accent adds a third dimension without overwhelming.
+
+<br />
+
+**Color blocking strategy:**
+```tsx
+// Three-color feature grid
+<div className="grid grid-cols-3 gap-6">
+  <div className="bg-[#FF006E] border-4 border-[#000000] p-8">
+    <h3 className="text-white">Feature 1</h3>
+  </div>
+  <div className="bg-[#00F0FF] border-4 border-[#000000] p-8">
+    <h3 className="text-black">Feature 2</h3>
+  </div>
+  <div className="bg-[#FFDB33] border-4 border-[#000000] p-8">
+    <h3 className="text-black">Feature 3</h3>
+  </div>
+</div>
+```
+
+<br />
+<br />
+
+### 3. Cyber Lime
+
+**Maximum visibility with a digital edge.**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #AAFC3D
+--primary-hover: #97F819
+--secondary: #FF4FD8
+--border: #000000
+--accent: #00F0FF
+```
+
+<br />
+
+**When to use:**
+- Gaming and esports
+- Tech startups
+- Developer tools
+- Anything futuristic or digital-first
+
+<br />
+
+**Why it works:**
+Lime green screams "digital" while magenta pink provides contrast. This palette feels like a terminal window crossed with a rave poster.
+
+<br />
+
+**Example:**
+```tsx
+// Hero section with lime background
+<section className="bg-[#AAFC3D] min-h-screen">
+  <h1 className="text-8xl font-black text-[#000000]">
+    LEVEL UP
+  </h1>
+  <button className="bg-[#FF4FD8] border-4 border-[#000000]
+                     shadow-[8px_8px_0_0_#000000]">
+    Start Playing
+  </button>
+</section>
+```
+
+<br />
+<br />
+
+### 4. Brutal Monochrome
+
+**When you want neobrutalism without the rainbow.**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #000000
+--secondary: #E5E5E5
+--border: #000000
+--card: #FFFFFF
+--accent: #666666
+```
+
+<br />
+
+**When to use:**
+- Minimalist neobrutalism (yes, it exists)
+- Architecture and design portfolios
+- When color would distract from content
+- Professional contexts that need edge
+
+<br />
+
+**Why it works:**
+Proves neobrutalism isn't about color—it's about structure. Thick borders, hard shadows, and bold typography carry the aesthetic without any hue.
+
+<br />
+
+**Pro tip:**
+Add one subtle accent for hover states:
+```css
+--hover-accent: #FFDB33  /* Yellow appears only on interaction */
+```
+
+<br />
+<br />
+
+## Vibrant & Energetic Palettes
+
+For brands that don't whisper.
+
+<br />
+
+### 5. Sunset Riot
+
+**Warmth meets rebellion.**
+
+```css
+--background: #FCFFE7
+--foreground: #000000
+--primary: #EA435F
+--primary-hover: #D00000
+--secondary: #FFDA5C
+--border: #000000
+--accent: #CEEBFC
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Food and beverage brands
+- Event websites and festivals
+- Lifestyle and wellness products
+- Anything that should feel warm and inviting
+
+<br />
+
+**Why it works:**
+Red and yellow create energy and appetite (literally—these are food colors). The light blue accent cools things down just enough.
+
+<br />
+
+**Background strategy:**
+The cream background (`#FCFFE7`) is softer than pure white, making the reds and yellows pop without being harsh.
+
+<br />
+<br />
+
+### 6. Lavender Dream
+
+**Neobrutalism meets whimsy.**
+
+```css
+--background: #F9F5F2
+--foreground: #000000
+--primary: #C4A1FF
+--primary-hover: #9678FF
+--secondary: #E7F193
+--accent: #FE91E9
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Creative portfolios
+- Art and illustration projects
+- Beauty and cosmetics
+- Gen Z brands that want playfulness
+
+<br />
+
+**Why it works:**
+Lavender purple is bold but not aggressive. Paired with lime yellow and magenta pink, it creates a playful, almost candy-like palette that still maintains neobrutalist structure.
+
+<br />
+
+**Example:**
+```tsx
+// Testimonial card with lavender accent
+<div className="bg-[#C4A1FF] border-4 border-[#000000] shadow-[6px_6px_0_0_#000000] p-8">
+  <p className="text-black font-bold text-lg">
+    "This product changed my workflow completely!"
+  </p>
+  <div className="bg-[#E7F193] border-2 border-[#000000] inline-block px-4 py-2 mt-4">
+    <span className="font-bold text-black">Sarah K., Designer</span>
+  </div>
+</div>
+```
+
+<br />
+<br />
+
+### 7. Orange Burst
+
+**High energy, maximum warmth.**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #F07200
+--primary-hover: #FF8011
+--secondary: #EF8C27
+--accent: #FF6B6B
+--border: #000000
+--muted: #FFE1C7
+```
+
+<br />
+
+**When to use:**
+- Sports and fitness brands
+- Summer campaigns
+- Products targeting energy and action
+- Call-to-action heavy pages
+
+<br />
+
+**Why it works:**
+Orange is underutilized in web design, making it instantly distinctive. Multiple orange shades create depth without needing additional colors.
+
+<br />
+<br />
+
+### 8. Forest Fresh
+
+**Earthy neobrutalism—who knew?**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #599D77
+--primary-hover: #39654C
+--secondary: #A3D9B1
+--accent: #FFE75A
+--border: #000000
+--card: #F9F5F2
+```
+
+<br />
+
+**When to use:**
+- Sustainable and eco brands
+- Health and wellness
+- Outdoor and nature-focused products
+- When you need neobrutalism that feels grounded
+
+<br />
+
+**Why it works:**
+Green doesn't have to be soft. This palette uses saturated greens with high contrast, maintaining the brutal aesthetic while feeling organic.
+
+<br />
+
+**Unique feature:**
+The cream card background (`#F9F5F2`) adds warmth that pure white wouldn't provide.
+
+<br />
+<br />
+
+## Bold Experimental Palettes
+
+For designers who want to push boundaries.
+
+<br />
+
+### 9. Neon Midnight
+
+**Dark mode neobrutalism at its finest.**
+
+```css
+--background: #0F0F0F
+--foreground: #F5F5F5
+--primary: #00FF88
+--secondary: #FF0066
+--accent: #00D4FF
+--border: #F5F5F5
+--card: #1A1A1A
+```
+
+<br />
+
+**When to use:**
+- Gaming platforms
+- Developer tools and coding apps
+- Night mode experiences
+- Cyberpunk aesthetics
+
+<br />
+
+**Why it works:**
+Neon colors on dark backgrounds create that terminal/hacker vibe. White borders instead of black flip the script while maintaining contrast.
+
+<br />
+
+**Implementation tip:**
+```tsx
+// Dark background with neon accents
+<div className="bg-[#0F0F0F] min-h-screen p-8">
+  <h1 className="text-[#00FF88] text-7xl font-black
+                 [-webkit-text-stroke:3px_#F5F5F5]">
+    GAME ON
+  </h1>
+  <button className="bg-[#FF0066] text-[#F5F5F5] border-4 border-[#F5F5F5]
+                     shadow-[6px_6px_0_0_#00D4FF]">
+    Play Now
+  </button>
+</div>
+```
+
+<br />
+<br />
+
+### 10. Bubblegum Chaos
+
+**Maximalism meets neobrutalism.**
+
+```css
+--background: #FFF5F8
+--foreground: #000000
+--primary: #FF3FE0
+--secondary: #00E5FF
+--accent-1: #FFE600
+--accent-2: #00FF94
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Music and entertainment
+- Toy brands and kid-focused products
+- Marketing campaigns with short lifespans
+- When subtlety would be a mistake
+
+<br />
+
+**Why it works:**
+Four vibrant colors sound like chaos, but the black borders and white cards contain it. This is neobrutalism's "more is more" philosophy taken to its logical extreme.
+
+<br />
+
+**Warning:**
+This palette is LOUD. Use it only if your brand can handle maximum energy.
+
+<br />
+<br />
+
+### 11. Electric Violet
+
+**Purple power with a modern edge.**
+
+```css
+--background: #F5F5F5
+--foreground: #1A1A1A
+--primary: #7B6DF5
+--primary-hover: #5F4FE6
+--secondary: #FED13B
+--border: #3A3A3A
+--card: #FFFFFF
+--muted: #CFCCEA
+```
+
+<br />
+
+**When to use:**
+- SaaS products
+- Fintech apps
+- Creative software
+- Modern productivity tools
+
+<br />
+
+**Why it works:**
+Purple feels premium without being pretentious. Yellow secondary provides warmth. This palette straddles professional and playful perfectly.
+
+<br />
+
+**Dark mode variant:**
+```css
+--background: #0F0F12
+--foreground: #F5F5F5
+--primary: #7B6DF5
+--card: #1A1A1D
+--border: #2E2E32
+```
+
+<br />
+<br />
+
+### 12. Blood Orange
+
+**Aggressive and warm.**
+
+```css
+--background: #FFF8F0
+--foreground: #000000
+--primary: #FF4500
+--secondary: #000000
+--accent: #FFD700
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Sports teams
+- Energy drinks and bold food brands
+- Action-oriented products
+- Halloween or autumn campaigns
+
+<br />
+
+**Why it works:**
+Red-orange is energetic and appetizing. The gold accent adds a premium touch. Black secondary grounds the warmth.
+
+<br />
+<br />
+
+## Sophisticated Brutal Palettes
+
+Neobrutalism can be refined. Here's proof.
+
+<br />
+
+### 13. Teal & Coral
+
+**Complementary colors done right.**
+
+```css
+--background: #FAFAFA
+--foreground: #000000
+--primary: #00BFA6
+--secondary: #FF6B6B
+--accent: #FFE66D
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Health and wellness apps
+- Educational platforms
+- Lifestyle brands
+- When you need balance between energetic and calming
+
+<br />
+
+**Why it works:**
+Teal and coral are complementary, creating natural visual interest. Yellow accent adds a third dimension. This palette feels fresh and modern.
+
+<br />
+<br />
+
+### 14. Indigo & Gold
+
+**Luxury brutalism.**
+
+```css
+--background: #F8F9FA
+--foreground: #000000
+--primary: #4B0082
+--secondary: #FFD700
+--accent: #FFFFFF
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Premium products
+- High-end fashion
+- Exclusive memberships
+- When neobrutalism needs to feel expensive
+
+<br />
+
+**Why it works:**
+Deep indigo signals quality and exclusivity. Gold provides luxury. Together they create a premium neobrutalist aesthetic that stands out from the usual primaries.
+
+<br />
+<br />
+
+### 15. Mint & Charcoal
+
+**Cool and collected.**
+
+```css
+--background: #FFFFFF
+--foreground: #2D3748
+--primary: #48BB78
+--secondary: #4A5568
+--accent: #F6E05E
+--border: #2D3748
+--card: #F7FAFC
+```
+
+<br />
+
+**When to use:**
+- Finance and banking (neobrutalist edition)
+- Professional services
+- B2B SaaS
+- When trust matters but boring isn't an option
+
+<br />
+
+**Why it works:**
+Mint green is bold but not aggressive. Charcoal instead of pure black softens the harshness slightly while maintaining contrast.
+
+<br />
+<br />
+
+## Experimental & Trend-Forward
+
+These are for the brave.
+
+<br />
+
+### 16. Dopamine Overload
+
+**Every color. All at once.**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #FF006E
+--secondary: #8338EC
+--accent-1: #FFBE0B
+--accent-2: #00F5FF
+--accent-3: #3A86FF
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Music festivals
+- Kids' apps and games
+- Marketing stunts
+- When "too much" is the goal
+
+<br />
+
+**Why it works (barely):**
+This palette breaks the "3 colors max" rule intentionally. Black borders and white backgrounds contain the chaos. Use sparingly.
+
+<br />
+
+**Pro tip:**
+Assign each color a specific purpose:
+```tsx
+// Each section gets its own accent
+<section className="bg-[#FF006E]">Hero</section>
+<section className="bg-[#8338EC]">Features</section>
+<section className="bg-[#FFBE0B]">Pricing</section>
+<section className="bg-[#00F5FF]">Testimonials</section>
+```
+
+<br />
+<br />
+
+### 17. Acid Wash
+
+**90s nostalgia meets modern brutalism.**
+
+```css
+--background: #E0F7FF
+--foreground: #000000
+--primary: #FF00FF
+--secondary: #00FFFF
+--accent: #FFFF00
+--border: #000000
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Retro gaming
+- Vaporwave aesthetics
+- Nostalgic brands
+- Anything ironically dated
+
+<br />
+
+**Why it works:**
+Pure magenta, cyan, and yellow evoke 90s computer graphics. The light blue background softens the intensity.
+
+<br />
+<br />
+
+### 18. Rust & Cream
+
+**Industrial neobrutalism.**
+
+```css
+--background: #FFF9F0
+--foreground: #2B1F1F
+--primary: #C1502E
+--secondary: #686463
+--accent: #E8C547
+--border: #2B1F1F
+--card: #FFFFFF
+```
+
+<br />
+
+**When to use:**
+- Construction and industrial
+- Handmade and artisan brands
+- Coffee and food (earthy vibes)
+- When neobrutalism needs warmth and texture
+
+<br />
+
+**Why it works:**
+Rust orange and cream create an earthy, organic feel. Dark brown instead of black adds warmth while maintaining contrast.
+
+<br />
+<br />
+
+### 19. Cyber Grape
+
+**Purple, but make it digital.**
+
+```css
+--background: #0D0221
+--foreground: #F0F0F0
+--primary: #8B5CF6
+--secondary: #EC4899
+--accent: #10B981
+--border: #F0F0F0
+--card: #1A0B2E
+```
+
+<br />
+
+**When to use:**
+- Cryptocurrency and blockchain
+- AI and machine learning products
+- Futuristic SaaS
+- Dark mode experiences
+
+<br />
+
+**Why it works:**
+Deep purple background with vibrant accents creates a high-tech feel. Light borders on dark background flip traditional neobrutalism while maintaining structure.
+
+<br />
+<br />
+
+### 20. Sunshine & Shadow
+
+**Maximum contrast, minimal colors.**
+
+```css
+--background: #FFFFFF
+--foreground: #000000
+--primary: #FFA500
+--secondary: #000000
+--accent: #FFFFFF
+--border: #000000
+--card: #FFF8DC
+```
+
+<br />
+
+**When to use:**
+- When you need brutal simplicity
+- Reading-heavy sites
+- Blogs and publications
+- When two colors (plus black/white) are enough
+
+<br />
+
+**Why it works:**
+Orange is the only color. Black and white do the heavy lifting. Cream cards add subtle warmth. This palette proves less can be more—even in neobrutalism.
+
+<br />
+<br />
+
+## How to Implement These Palettes
+
+Choose your favorite palette and drop it into your CSS:
+
+<br />
+
+### For Tailwind CSS v4
+
+Add to your `styles.css`:
+
+```css
+@theme {
+  --color-background: #FFFFFF;
+  --color-foreground: #000000;
+  --color-primary: #FFDB33;
+  --color-secondary: #000000;
+  --color-border: #000000;
+  --color-card: #FFFFFF;
+}
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #000000;
+  --primary: #FFDB33;
+  --border: #000000;
+}
+```
+
+<br />
+
+Then use in your markup:
+
+```tsx
+<button className="bg-primary text-foreground border-4 border-border">
+  Click Me
+</button>
+```
+
+<br />
+
+### For Regular CSS
+
+Define CSS variables:
+
+```css
+:root {
+  --background: #FFFFFF;
+  --foreground: #000000;
+  --primary: #FFDB33;
+  --border: #000000;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--foreground);
+  border: 4px solid var(--border);
+  box-shadow: 6px 6px 0 0 var(--border);
+}
+```
+
+<br />
+
+### For React/Styled Components
+
+```tsx
+export const theme = {
+  colors: {
+    background: '#FFFFFF',
+    foreground: '#000000',
+    primary: '#FFDB33',
+    border: '#000000',
+  },
+  shadows: {
+    brutal: '6px 6px 0 0 #000000',
+  },
+}
+```
+
+<br />
+<br />
+
+## Choosing the Right Palette for Your Project
+
+Still overwhelmed? Use this decision tree:
+
+<br />
+
+**If you're building a SaaS or tech product:**
+→ Start with **Electric Yellow** (#1) or **Electric Violet** (#11)
+
+<br />
+
+**If you're targeting creatives or designers:**
+→ Try **Lavender Dream** (#6) or **Hot Pink Punch** (#2)
+
+<br />
+
+**If you need professional but bold:**
+→ Use **Mint & Charcoal** (#15) or **Teal & Coral** (#13)
+
+<br />
+
+**If your brand is high-energy:**
+→ Go with **Cyber Lime** (#3) or **Orange Burst** (#7)
+
+<br />
+
+**If you're building in dark mode:**
+→ Start with **Neon Midnight** (#9) or **Cyber Grape** (#19)
+
+<br />
+
+**If you want to be safe:**
+→ **Brutal Monochrome** (#4) or **Sunshine & Shadow** (#20)
+
+<br />
+
+**If you want to be different:**
+→ **Bubblegum Chaos** (#10) or **Dopamine Overload** (#16)
+
+<br />
+<br />
+
+## Color Combinations to Avoid
+
+Not every bold color works in neobrutalism. Here are combinations to skip:
+
+<br />
+
+**1. Pastels + Black Borders**
+Soft pink (#FFB6C1) and lavender (#E6E6FA) don't have enough saturation. They fight against the hard structure.
+
+<br />
+
+**2. Too Many Primaries**
+Red + Blue + Yellow + Green + Purple = visual chaos. Stick to 1 primary, 1-2 secondaries max.
+
+<br />
+
+**3. Low Contrast Accents**
+Light yellow (#FFFFE0) on white backgrounds. Gray (#808080) on white. If you squint and can't see it, don't use it.
+
+<br />
+
+**4. Muddy Browns**
+Brown (#8B4513) can work (see Rust & Cream), but most browns feel too organic for neobrutalism's geometric energy.
+
+<br />
+
+**5. Multiple Neons**
+Neon pink + neon green + neon blue = migraine. Pick ONE neon, ground it with black and white.
+
+<br />
+<br />
+
+## Pro Tips for Using These Palettes
+
+### 1. Start Monochrome, Add Color Strategically
+
+Build your layout in black and white first. Then add color only where you need emphasis:
+- CTAs get the primary color
+- Important sections get secondary
+- Everything else stays neutral
+
+<br />
+
+### 2. Use the 60-30-10 Rule
+
+Even in neobrutalism, proportion matters:
+- 60% neutral (white, black, grays)
+- 30% primary color
+- 10% secondary/accent
+
+<br />
+
+### 3. Test Accessibility
+
+Run your palette through a contrast checker. Black text on yellow? Usually passes. Pink text on white? Often fails.
+
+**Tool:** Use [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+
+<br />
+
+### 4. Create Hover States
+
+Reduce saturation or darken your primary color for hover:
+```css
+--primary: #FFDB33;
+--primary-hover: #FFCC00; /* Slightly darker */
+```
+
+<br />
+
+### 5. Don't Forget Dark Mode
+
+Most of these palettes have dark mode variants. Just flip the backgrounds and adjust brightness:
+
+```css
+/* Light mode */
+--background: #FFFFFF;
+--foreground: #000000;
+--primary: #FFDB33;
+
+/* Dark mode */
+.dark {
+  --background: #1A1A1A;
+  --foreground: #F5F5F5;
+  --primary: #FFDB33; /* Often stays the same */
+}
+```
+
+<br />
+<br />
+
+## Download All Palettes
+
+Want all 20 palettes in a ready-to-use format?
+
+<br />
+
+**Tailwind Config:**
+All 20 palettes as Tailwind theme configurations → [Download JSON](#)
+
+<br />
+
+**CSS Variables:**
+All 20 palettes as CSS variable sets → [Download CSS](#)
+
+<br />
+
+**Figma:**
+All 20 palettes as Figma color styles → [Get Figma File](#)
+
+<br />
+<br />
+
+## Final Thoughts
+
+Color is subjective, but neobrutalist color isn't complicated:
+
+<br />
+
+**The formula:**
+1. Start with black and white (non-negotiable)
+2. Pick ONE bold primary color (yellow, pink, lime, orange, purple)
+3. Add ONE secondary accent if needed (optional)
+4. Use sparingly—let black and white do the work
+
+<br />
+
+The palettes in this guide cover everything from safe starter options (Electric Yellow, Brutal Monochrome) to experimental madness (Bubblegum Chaos, Dopamine Overload).
+
+<br />
+
+Start with one. Use it. Adjust it. Make it yours.
+
+<br />
+
+And remember: the best neobrutalist palette is the one you commit to. Half measures don't work in this aesthetic. Go bold or go home.
+
+<br />
+
+Now pick your colors and build something impossible to ignore. 🎨
+
+<br />
+<br />
+
+---
+
+<br />
+
+**Using RetroUI?** These palettes are already built into the library. Just swap the theme and you're done → [retroui.dev](https://retroui.dev)
+
+**Want more?** Drop a comment with your favorite palette or share your own brutal color combinations.

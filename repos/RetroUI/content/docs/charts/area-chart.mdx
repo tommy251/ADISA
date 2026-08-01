@@ -1,0 +1,149 @@
+---
+title: Area Chart
+path: /charts/area-chart
+description: A customizable area chart component to visualize your data with gradient fills and smooth curves. 📈
+lastUpdated: 12 Aug, 2025
+links:
+  source: https://github.com/logging-studio/RetroUI/blob/main/components/retroui/charts/AreaChart.tsx
+---
+
+<ComponentShowcase name="area-chart-style-default" />
+<br />
+<br />
+
+## Installation
+
+<ComponentInstall>
+  <ComponentInstall.Cli npmCommand="npx shadcn@latest add 'https://retroui.dev/r/area-chart.json'" />
+  <ComponentInstall.Manual>
+
+#### 1. Install dependencies:
+
+```sh
+npm install recharts
+```
+
+<br />
+
+#### 2. Copy the code 👇 into your project:
+
+<ComponentSource name="areaChart" />
+
+  </ComponentInstall.Manual>
+</ComponentInstall>
+
+<br />
+<br />
+
+## Examples
+
+### Default
+
+<ComponentShowcase name="area-chart-style-default" />
+<br />
+<br />
+
+### Multiple Categories
+
+<ComponentShowcase name="area-chart-style-multiple" />
+<br />
+<br />
+
+### Stacked Areas
+
+<ComponentShowcase name="area-chart-style-stacked" />
+<br />
+<br />
+
+## API Reference
+
+<Table>
+  <Table.Header>
+    <Table.Row>
+      <Table.Head>Prop</Table.Head>
+      <Table.Head>Type</Table.Head>
+      <Table.Head>Default</Table.Head>
+      <Table.Head>Description</Table.Head>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell className="font-medium">data</Table.Cell>
+      <Table.Cell className="*:text-xs">`Record<string, any>[]`</Table.Cell>
+      <Table.Cell className="*:text-xs">`[]`</Table.Cell>
+      <Table.Cell>Array of data objects to display</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">index</Table.Cell>
+      <Table.Cell className="*:text-xs">`string`</Table.Cell>
+      <Table.Cell className="*:text-xs">-</Table.Cell>
+      <Table.Cell>Key for the x-axis (category) data</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">categories</Table.Cell>
+      <Table.Cell className="*:text-xs">`string[]`</Table.Cell>
+      <Table.Cell className="*:text-xs">`[]`</Table.Cell>
+      <Table.Cell>Array of keys for the data values to display as areas</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">fill</Table.Cell>
+      <Table.Cell className="*:text-xs">`"gradient" | "solid"`</Table.Cell>
+      <Table.Cell className="*:text-xs">`"gradient"`</Table.Cell>
+      <Table.Cell>Fill style for the areas</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">strokeColors</Table.Cell>
+      <Table.Cell className="*:text-xs">`string[]`</Table.Cell>
+      <Table.Cell className="*:text-xs">`["var(--foreground)"]`</Table.Cell>
+      <Table.Cell>Array of stroke colors for the areas</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">fillColors</Table.Cell>
+      <Table.Cell className="*:text-xs">`string[]`</Table.Cell>
+      <Table.Cell className="*:text-xs">`["var(--primary)"]`</Table.Cell>
+      <Table.Cell>Array of fill colors for the areas</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">tooltipBgColor</Table.Cell>
+      <Table.Cell className="*:text-xs">`string`</Table.Cell>
+      <Table.Cell className="*:text-xs">`"var(--background)"`</Table.Cell>
+      <Table.Cell>Background color for tooltips</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">tooltipBorderColor</Table.Cell>
+      <Table.Cell className="*:text-xs">`string`</Table.Cell>
+      <Table.Cell className="*:text-xs">`"var(--border)"`</Table.Cell>
+      <Table.Cell>Border color for tooltips</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">gridColor</Table.Cell>
+      <Table.Cell className="*:text-xs">`string`</Table.Cell>
+      <Table.Cell className="*:text-xs">`"var(--muted)"`</Table.Cell>
+      <Table.Cell>Color for the grid lines</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">valueFormatter</Table.Cell>
+      <Table.Cell className="*:text-xs">`(value: number) => string`</Table.Cell>
+      <Table.Cell className="*:text-xs">`(value) => value.toString()`</Table.Cell>
+      <Table.Cell>Function to format values</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">showGrid</Table.Cell>
+      <Table.Cell className="*:text-xs">`boolean`</Table.Cell>
+      <Table.Cell className="*:text-xs">`true`</Table.Cell>
+      <Table.Cell>Whether to show grid lines</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">showTooltip</Table.Cell>
+      <Table.Cell className="*:text-xs">`boolean`</Table.Cell>
+      <Table.Cell className="*:text-xs">`true`</Table.Cell>
+      <Table.Cell>Whether to show tooltips on hover</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell className="font-medium">className</Table.Cell>
+      <Table.Cell className="*:text-xs">`string`</Table.Cell>
+      <Table.Cell className="*:text-xs">-</Table.Cell>
+      <Table.Cell>Additional CSS classes</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>

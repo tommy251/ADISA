@@ -1,0 +1,67 @@
+---
+title: Popover
+path: /components/popover
+description: A handy small component for your little input needs...😉
+lastUpdated: 09 Sep, 2025
+links:
+  source: https://github.com/logging-studio/RetroUI/blob/main/components/retroui/Popover.tsx
+---
+
+<ComponentShowcase name="popover-style-default" />
+<br />
+<br />
+
+<ComponentInstall>
+  <ComponentInstall.Cli npmCommand="npx shadcn@latest add @retroui/popover" />
+  <ComponentInstall.Manual>
+#### 1. Install dependencies:
+
+```sh
+npm install @base-ui/react
+```
+
+<br />
+
+#### 2. Copy the code 👇 into your project:
+
+<ComponentSource name="popover" />
+    </ComponentInstall.Manual>
+
+</ComponentInstall>
+
+<br />
+<br />
+
+## Usage
+
+```typescript
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/retroui/Popover";
+```
+
+```typescript
+<Popover>
+  <PopoverTrigger>Open</PopoverTrigger>
+  <PopoverContent>Place content for the popover here.</PopoverContent>
+</Popover>
+```
+
+<br />
+<br />
+
+## Examples
+
+### Default
+
+<ComponentShowcase name="popover-style-default" />
+<br />
+<br />
+
+### Shadowed
+
+<ComponentShowcase name="popover-style-default-shadow" />
+<br />
+<br />

@@ -1,0 +1,620 @@
+---
+title: How to Convert Any React Project to Neobrutalism in 10 Minutes
+slug: convert-react-to-neobrutalism-10-minutes
+coverImage: https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/blogs/convert-to-neobrutalism/cover.png
+description: Want to give your boring React app a bold makeover? Learn how to transform any React project into a stunning neobrutalist design in just 10 minutes using RetroUI. Step-by-step tutorial with before/after examples.
+tags:
+  - react
+  - neobrutalism
+  - ui design
+  - tutorial
+  - retroui
+author:
+  name: Imran Hossain
+  avatar: https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/people/imran.jpg
+  linkedin: faraazhossainimran
+
+status: draft
+publishedAt: 1 May, 2026
+---
+
+Let's be real: your React app probably looks like every other React app out there. Clean? Sure. Professional? Absolutely. Memorable? Not even close.
+
+<br />
+
+But what if I told you that in just 10 minutes, you could transform your generic-looking project into something that screams personality? Something that makes people go, "Whoa, what's THAT?"
+
+<br />
+
+That's the power of neobrutalism—a design style that's bold, unapologetic, and impossible to ignore. And with RetroUI, converting your React project is ridiculously easy.
+
+<br />
+
+Grab your coffee (or energy drink, no judgment), and let's turn that vanilla app into something spicy.
+
+<br />
+
+## What the Heck is Neobrutalism Anyway?
+
+Before we dive in, let's get on the same page. Neobrutalism is a design movement that takes inspiration from the raw, concrete-heavy brutalist architecture of the 1950s and gives it a modern, digital twist.
+
+<br />
+
+Think:
+- **Thick black borders** on everything
+- **Hard shadows** (none of that soft blur nonsense)
+- **High contrast colors** like black, white, and neon yellow
+- **Zero rounded corners** (sharp and angular, baby)
+- **Asymmetric layouts** that break the grid
+
+<br />
+
+It's anti-perfectionism. It's rebellious. It's the design equivalent of wearing a leather jacket to a board meeting. And it works.
+
+<br />
+
+## Why RetroUI?
+
+You could build neobrutalist components from scratch, but why reinvent the wheel when RetroUI exists? It's a React UI library built specifically for neobrutalism, with:
+
+- Pre-built components with that signature brutal aesthetic
+- Easy installation via CLI
+- Fully customizable with Tailwind CSS
+- Works with Next.js, Vite, Remix—basically any React setup
+
+<br />
+
+Plus, it's free and open-source. Let's get started.
+
+<br />
+<br />
+
+## Step 1: Set Up Your Project (2 minutes)
+
+First things first. If you're working with an existing React project, you're already ahead. If not, let's spin up a quick Next.js app (but this works for any React framework).
+
+<br />
+
+```bash
+npx create-next-app@latest my-brutal-app
+cd my-brutal-app
+```
+
+<br />
+
+Say yes to TypeScript and Tailwind CSS when prompted. We'll need both.
+
+<br />
+
+If you're using Vite or Create React App, that's cool too—the setup is nearly identical.
+
+<br />
+<br />
+
+## Step 2: Install RetroUI (1 minute)
+
+Now for the magic. We need to initialize shadcn (RetroUI uses it under the hood) and install the RetroUI utilities.
+
+<br />
+
+Run this command:
+
+```bash
+npx shadcn@latest init
+```
+
+<br />
+
+You'll get some prompts. Here's what you should pick:
+- Style: **Default**
+- Base color: **Slate** (doesn't matter much, we'll override it)
+- CSS variables: **Yes**
+
+<br />
+
+Next, install the RetroUI utils:
+
+```bash
+npx shadcn@latest add https://retroui.dev/r/utils.json
+```
+
+<br />
+
+Done. That's it. You now have the foundation to build brutalist interfaces.
+
+<br />
+<br />
+
+## Step 3: Add the Neobrutalist Theme (2 minutes)
+
+This is where the transformation really begins. Open your `global.css` file (usually in `app/globals.css` or `src/index.css`) and replace the theme variables with RetroUI's signature brutal theme.
+
+<br />
+
+Paste this into your CSS:
+
+```css
+@theme {
+  --font-head: var(--font-head);
+  --font-sans: var(--font-sans);
+  --radius: 0;
+
+  --shadow-xs: 1px 1px 0 0 var(--border);
+  --shadow-sm: 2px 2px 0 0 var(--border);
+  --shadow: 3px 3px 0 0 var(--border);
+  --shadow-md: 4px 4px 0 0 var(--border);
+  --shadow-lg: 6px 6px 0 0 var(--border);
+  --shadow-xl: 10px 10px 0 1px var(--border);
+  --shadow-2xl: 16px 16px 0 1px var(--border);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-border: var(--border);
+}
+
+:root {
+  --radius: 0;
+  --background: #fff;
+  --foreground: #000;
+  --primary: #ffdb33;
+  --primary-foreground: #000;
+  --secondary: #000;
+  --secondary-foreground: #fff;
+  --border: #000;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #f5f5f5;
+  --primary: #ffdb33;
+  --primary-foreground: #000;
+  --secondary: #3a3a3a;
+  --secondary-foreground: #f5f5f5;
+  --border: #3a3a3a;
+}
+```
+
+<br />
+
+**What just happened?**
+
+- We killed all border-radius (no more rounded corners!)
+- We swapped soft shadows for hard, offset shadows
+- We set up a bold black/white/yellow color scheme
+- We added dark mode support (because we're not savages)
+
+<br />
+
+Already, your app is starting to look different. But we're not done yet.
+
+<br />
+<br />
+
+## Step 4: Install Your First Components (2 minutes)
+
+Let's grab some actual components. We'll start with the essentials: Button, Card, and Input.
+
+<br />
+
+Run these commands one by one:
+
+```bash
+npx shadcn@latest add https://retroui.dev/r/button.json
+npx shadcn@latest add https://retroui.dev/r/card.json
+npx shadcn@latest add https://retroui.dev/r/input.json
+```
+
+<br />
+
+Each component gets added to your `components/retroui/` folder, ready to use. No need to write a single line of CSS.
+
+<br />
+<br />
+
+## Step 5: Swap Out Your Components (2 minutes)
+
+Now comes the fun part—replacing your boring old components with the new brutal ones.
+
+<br />
+
+**Before:**
+```tsx
+// Your old, generic button
+<button className="bg-blue-500 text-white px-4 py-2 rounded">
+  Click Me
+</button>
+```
+
+<br />
+
+**After:**
+```tsx
+import { Button } from "@/components/retroui/Button";
+
+<Button>Click Me</Button>
+```
+
+<br />
+
+Just like that, you've got a button with thick black borders, a hard shadow, and that signature neobrutalist vibe.
+
+<br />
+
+Let's do the same for a card:
+
+<br />
+
+**Before:**
+```tsx
+<div className="bg-white shadow-lg rounded-lg p-6">
+  <h2 className="text-2xl font-bold">My Card</h2>
+  <p className="text-gray-600">Some generic content here.</p>
+</div>
+```
+
+<br />
+
+**After:**
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/retroui/Card";
+
+<Card>
+  <CardHeader>
+    <CardTitle>My Card</CardTitle>
+    <CardDescription>Now with 100% more attitude.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Some bold content here.
+  </CardContent>
+</Card>
+```
+
+<br />
+
+Same structure, completely different vibe. The card now has sharp edges, bold borders, and a hard shadow that makes it pop off the page.
+
+<br />
+<br />
+
+## Step 6: Add Neobrutalist Fonts (1 minute)
+
+Typography is HUGE in neobrutalism. The default system fonts won't cut it. RetroUI recommends **Archivo Black** for headings and **Space Grotesk** for body text.
+
+<br />
+
+If you're using Next.js, add this to your `app/layout.tsx`:
+
+```tsx
+import { Archivo_Black, Space_Grotesk } from "next/font/google";
+
+const archivoBlack = Archivo_Black({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-head",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-sans",
+  display: "swap",
+});
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={`${archivoBlack.variable} ${spaceGrotesk.variable}`}>
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+<br />
+
+Now your headings are chunky and bold, while your body text stays clean and readable.
+
+<br />
+<br />
+
+## Step 7: Fine-Tune and Customize (Optional)
+
+You're basically done at this point, but if you want to customize further, RetroUI makes it easy.
+
+<br />
+
+**Want a different accent color?** Change the `--primary` variable in your CSS.
+
+```css
+:root {
+  --primary: #ff006e; /* Hot pink instead of yellow */
+}
+```
+
+<br />
+
+**Want softer shadows?** Adjust the shadow variables.
+
+```css
+--shadow: 2px 2px 0 0 var(--border); /* Smaller offset */
+```
+
+<br />
+
+**Want to add more components?** Check out the full library at [retroui.dev/docs/components](https://retroui.dev/docs/components). There are inputs, badges, dialogs, tables, and more—all styled with that brutal aesthetic.
+
+<br />
+<br />
+
+## Before and After: The Transformation
+
+Alright, let's see the difference. Here's what a simple landing page looks like before and after the neobrutalist conversion.
+
+<br />
+
+### Before: Generic React App
+
+```tsx
+export default function GenericLanding() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-md bg-white shadow-lg rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          Welcome to My App
+        </h1>
+        <p className="text-gray-600 mb-6">
+          This is a clean, minimal design that looks like every other React app.
+        </p>
+        <input
+          type="email"
+          placeholder="Enter your email"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
+        />
+        <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Get Started
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+<br />
+
+**What's wrong with this?**
+
+Nothing, technically. It's functional. It's clean. But it's also completely forgettable. If you showed this to 100 people, they'd confuse it with a dozen other sites they've seen this week.
+
+<br />
+
+### After: Neobrutalist Makeover
+
+```tsx
+import { Button } from "@/components/retroui/Button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/retroui/Card";
+import { Input } from "@/components/retroui/Input";
+
+export default function BrutalLanding() {
+  return (
+    <div className="min-h-screen bg-[#ffdb33] flex items-center justify-center p-4">
+      <Card className="max-w-md w-full">
+        <CardHeader>
+          <CardTitle className="text-4xl font-head uppercase">
+            Welcome to My App
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-lg font-sans">
+            This is a bold, memorable design that actually stands out.
+          </p>
+          <Input type="email" placeholder="Enter your email" />
+          <Button className="w-full">Get Started</Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+<br />
+
+**What changed?**
+
+- **Background:** Went from boring gray to electric yellow
+- **Typography:** Used bold, uppercase heading with Archivo Black
+- **Borders:** Everything has thick black borders
+- **Shadows:** Hard, offset shadows instead of soft blurs
+- **Corners:** Zero border-radius—sharp and angular
+- **Vibe:** From "corporate brochure" to "indie startup with attitude"
+
+<br />
+
+This is the same component structure, the same layout, but it feels completely different. People will remember this.
+
+<br />
+<br />
+
+## Another Example: Dashboard Widget
+
+Let's look at a more complex example—a dashboard stats card.
+
+<br />
+
+### Before: Bland Dashboard
+
+```tsx
+export default function GenericStats() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <div className="bg-white rounded-lg shadow p-6">
+        <p className="text-gray-500 text-sm">Total Users</p>
+        <p className="text-3xl font-bold text-gray-900">1,284</p>
+        <p className="text-green-500 text-sm">+12% from last month</p>
+      </div>
+      <div className="bg-white rounded-lg shadow p-6">
+        <p className="text-gray-500 text-sm">Revenue</p>
+        <p className="text-3xl font-bold text-gray-900">$52,340</p>
+        <p className="text-green-500 text-sm">+8% from last month</p>
+      </div>
+      <div className="bg-white rounded-lg shadow p-6">
+        <p className="text-gray-500 text-sm">Active Now</p>
+        <p className="text-3xl font-bold text-gray-900">127</p>
+        <p className="text-red-500 text-sm">-3% from last hour</p>
+      </div>
+    </div>
+  );
+}
+```
+
+<br />
+
+### After: Brutal Dashboard
+
+```tsx
+import { Card, CardContent } from "@/components/retroui/Card";
+
+export default function BrutalStats() {
+  return (
+    <div className="grid grid-cols-3 gap-6">
+      <Card className="bg-[#ffdb33]">
+        <CardContent className="pt-6">
+          <p className="text-sm font-bold uppercase mb-2">Total Users</p>
+          <p className="text-5xl font-head mb-2">1,284</p>
+          <p className="text-sm font-bold">▲ 12% from last month</p>
+        </CardContent>
+      </Card>
+      <Card className="bg-white">
+        <CardContent className="pt-6">
+          <p className="text-sm font-bold uppercase mb-2">Revenue</p>
+          <p className="text-5xl font-head mb-2">$52,340</p>
+          <p className="text-sm font-bold">▲ 8% from last month</p>
+        </CardContent>
+      </Card>
+      <Card className="bg-black text-white">
+        <CardContent className="pt-6">
+          <p className="text-sm font-bold uppercase mb-2">Active Now</p>
+          <p className="text-5xl font-head mb-2">127</p>
+          <p className="text-sm font-bold">▼ 3% from last hour</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+<br />
+
+**What's different?**
+
+- **Color blocking:** Each card has a distinct background (yellow, white, black)
+- **Bold typography:** Numbers are huge and use the display font
+- **High contrast:** White text on black creates instant visual hierarchy
+- **Uppercase labels:** Makes everything feel more intentional and bold
+- **Arrows instead of color:** Uses ▲ and ▼ symbols for clarity
+
+<br />
+
+Same data, wildly different presentation. The brutal version feels confident and designed, not just assembled.
+
+<br />
+<br />
+
+## Pro Tips for Neobrutalist Design
+
+Now that you've got the basics down, here are some tips to really nail the aesthetic:
+
+<br />
+
+**1. Embrace Asymmetry**
+
+Don't be afraid to break the grid. Offset elements, overlap borders, let things breathe unevenly. Perfection is boring.
+
+<br />
+
+**2. Use Color Intentionally**
+
+Neobrutalism loves high-contrast color combos. Black and white as your base, then add one or two accent colors (yellow, pink, cyan). Don't go rainbow—pick a vibe and commit.
+
+<br />
+
+**3. Go Big on Typography**
+
+Headings should be MASSIVE. Body text can be normal, but your H1s should command attention. Use bold, uppercase letters when you want to make a statement.
+
+<br />
+
+**4. Add Micro-Interactions**
+
+Brutal doesn't mean static. Add hover effects where buttons slightly shift or shadows get bigger. Keep it subtle but noticeable.
+
+```tsx
+<Button className="hover:translate-x-1 hover:translate-y-1 transition-transform">
+  Click Me
+</Button>
+```
+
+<br />
+
+**5. Don't Overdo It**
+
+Not every element needs a thick border. Not every section needs a bright background. Balance is still important—just tilted toward boldness.
+
+<br />
+<br />
+
+## What to Do Next
+
+Congrats! You just gave your React project a complete visual overhaul in about 10 minutes. Here's what you can do from here:
+
+<br />
+
+**Explore More Components**
+
+RetroUI has a full library of components—badges, dialogs, tables, tabs, and more. Check out the [component docs](https://retroui.dev/docs/components) and see what else you can add.
+
+<br />
+
+**Customize Your Theme**
+
+Play with the CSS variables to match your brand. Change accent colors, adjust shadow intensity, or tweak spacing to make it yours.
+
+<br />
+
+**Build Something Cool**
+
+Now that your app doesn't look generic, show it off! Share it on Twitter, post it on Reddit, add it to your portfolio. People notice neobrutalism.
+
+<br />
+
+**Join the Community**
+
+RetroUI has an active Discord where designers and developers share projects, ask questions, and geek out over brutal design. Jump in and say hi.
+
+<br />
+<br />
+
+## Final Thoughts
+
+Most React apps look the same because most developers reach for the same tools—Material UI, Bootstrap, shadcn with default settings. There's nothing wrong with those (they're great!), but they won't help you stand out.
+
+<br />
+
+Neobrutalism is a shortcut to personality. It's bold, memorable, and surprisingly easy to implement with the right tools. RetroUI gives you everything you need to make the switch without rebuilding from scratch.
+
+<br />
+
+In just 10 minutes, you went from "another React app" to "wait, what's THAT?" And honestly? That's powerful.
+
+<br />
+
+So go ahead—make your app impossible to ignore.
+
+<br />
+
+Now get out there and build something brutal. 🚀
