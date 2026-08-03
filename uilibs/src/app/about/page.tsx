@@ -38,7 +38,7 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 md:grid-cols-3">
           {[
             { icon: ShieldCheck, title: "Fair prices always",
-              body: "We show source prices (₦8k–18k) next to ours (₦20k–35k). No ₦100,000 hidden markup — just what's fair." },
+              body: "Quality men's shoes priced between ₦20k and ₦35k. No inflated markups — just what's fair." },
             { icon: Truck, title: "Delivered, insured",
               body: "Insured courier to every state in Nigeria + FCT, 2–5 working days, signature on delivery." },
             { icon: Wallet, title: "Card or crypto",

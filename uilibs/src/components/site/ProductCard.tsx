@@ -64,9 +64,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             <div className="font-head text-lg font-bold">
               {formatNGN(product.salePrice)}
             </div>
-            <div className="text-[11px] uppercase tracking-wide text-muted-foreground line-through">
-              Source ₦{product.sourcePrice.toLocaleString("en-NG")}
-            </div>
           </div>
           <Link
             href={`/shop/${product.slug}`}

@@ -104,12 +104,9 @@ export default function ProductDetailClient({
               <span className="font-head text-4xl font-extrabold">
                 {formatNGN(product.salePrice)}
               </span>
-              <span className="text-sm uppercase tracking-wide text-muted-foreground line-through">
-                Source ₦{product.sourcePrice.toLocaleString("en-NG")}
-              </span>
             </div>
             <p className="mt-1 text-xs uppercase tracking-widest text-[var(--adisa-green)]">
-              Fair price · across similar sellers: ₦45,000 – ₦100,000
+              Fair price · card and crypto accepted
             </p>
 
             <p className="mt-6 text-base leading-7 text-muted-foreground">
@@ -245,9 +242,8 @@ export default function ProductDetailClient({
               <h3 className="font-head text-sm uppercase tracking-widest text-[var(--adisa-clay)]">About this shoe</h3>
               <p className="mt-2 text-base leading-7 text-muted-foreground">{product.description}</p>
               <p className="mt-4 text-sm text-muted-foreground">
-                Each ADISA shoe is sourced directly and shipped insured. The source price
-                (what other countries sell it for) is shown beside your price. We mark up
-                what is fair, not what is greedy.
+                Each ADISA shoe is sourced directly and shipped insured.
+                We mark up what is fair, not what is greedy.
               </p>
             </div>
 

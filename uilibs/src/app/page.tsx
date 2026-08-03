@@ -14,7 +14,7 @@ const HERO_CATEGORIES = ["sneakers", "formal", "boots", "loafers", "sandals", "a
 const TRUST_ITEMS = [
   "Card & Crypto payments",
   "Insured delivery to all 36 states + FCT",
-  "Fair pricing — no ₦100,000 markups",
+  "Fair pricing — no hidden markups",
   "Real photos of real shoes",
   "UK ↔ Nigeria sizes shown",
   "Named for Darosa · grace under foot",
@@ -49,7 +49,7 @@ export default function HomePage() {
             </h1>
             <p className="mt-6 max-w-lg text-base leading-8 text-muted-foreground">
               Premium sneakers, formal, boots, loafers & sandals. Same quality
-              you will see elsewhere for ₦100,000 — ADISA brings them to you for
+              you see elsewhere at a premium — ADISA brings them to you for
               <strong className="text-foreground"> ₦20k – ₦35k</strong>. Card and
               crypto accepted. Delivery in 2–5 working days.
             </p>
@@ -198,7 +198,7 @@ export default function HomePage() {
       <section className="border-y-2 border-black bg-[var(--adisa-ink)] py-16 text-[var(--adisa-bone)]">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-3">
           {[
-            { icon: Tag,   title: "Fair prices",  body: "Source ₦8k–18k maps to ₦20k–35k. We show the source price next to ours." },
+            { icon: Tag,   title: "Fair prices",  body: "Quality men's shoes, priced honestly between ₦20k and ₦35k. Card or crypto." },
             { icon: Truck, title: "Nationwide",   body: "Insured delivery to all 36 states + FCT, 2–5 working days." },
             { icon: Wallet, title: "Card & Crypto", body: "Pay with Naira cards through Paystack, or Bitcoin/USDC via Coinbase Commerce." },
           ].map((c, i) => (

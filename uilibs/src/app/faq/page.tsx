@@ -86,7 +86,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
     a: (
       <p>
         Sourced directly from the same suppliers selling in other countries. We charge
-        the source price we paid, plus a transparent, fair markup. No knock-offs.
+        a fair, transparent markup — no inflated prices, no knock-offs.
       </p>
     ),
   },
