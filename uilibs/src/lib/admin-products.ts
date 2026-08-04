@@ -24,7 +24,10 @@ export async function adminListProducts(limit = 200): Promise<Product[]> {
     .select("*")
     .order("created_at", { ascending: false })
     .limit(limit);
-  if (error) throw new Error(`Supabase list failed: ${error.message}`);
+  if (error) {
+    console.error("Supabase list error - full details:", JSON.stringify(error, null, 2));
+    throw new Error(`Supabase list failed: ${error.message}`);
+  }
   return (data ?? []).map(rowToProduct);
 }
 
