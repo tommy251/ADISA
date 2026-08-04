@@ -1,15 +1,12 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { PRODUCTS, getProductBySlug, getByCategory } from "@/lib/products";
+import { getProductBySlug, getByCategory } from "@/lib/catalog";
 import { formatNGN } from "@/lib/pricing";
 import ProductDetailClient from "@/components/site/ProductDetailClient";
 
-// Prerender one landing page per shoe slug at build time
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.slug }));
-}
+// Always fetch fresh from Supabase so admin edits (and newly added
+// products) show up immediately without needing a rebuild.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -17,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return { title: "Not found — ADISA" };
 
   return {
@@ -35,11 +32,11 @@ export default async function ProductPage({
   params,
 }: PageProps<"/shop/[slug]">) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   // related: same category, excluding this item
-  const related = getByCategory(product.category)
+  const related = (await getByCategory(product.category))
     .filter((p) => p.slug !== product.slug)
     .slice(0, 4);
 

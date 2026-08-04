@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Truck, ShieldCheck, Tag, Wallet, Star } from "lucide-react";
-import { PRODUCTS, getFeaturedProducts, categoryLabel } from "@/lib/products";
+import { getAllProducts, getFeaturedProducts, getProductBySlug, categoryLabel } from "@/lib/catalog";
 import { formatNGN } from "@/lib/pricing";
 import { ProductCard } from "@/components/site/ProductCard";
 import { AnimateOnView } from "@/components/site/AnimateOnView";
@@ -9,7 +9,15 @@ import { Marquee } from "@/components/ui/marquee";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import ShimmerLink from "@/components/site/ShimmerLink";
 
+// Always fetch fresh from Supabase so admin edits show up immediately.
+export const dynamic = "force-dynamic";
+
 const HERO_CATEGORIES = ["sneakers", "formal", "boots", "loafers", "sandals", "athletic"] as const;
+
+// Specific shoes for the hero collage, referenced by slug (stable)
+// instead of array index (was fragile once data comes from a DB
+// whose row order won't match the old hardcoded array order).
+const HERO_SLUGS = ["oluwa-runner", "okechukwu-boot", "emeka-brogue"];
 
 const TRUST_ITEMS = [
   "Card & Crypto payments",
@@ -20,9 +28,12 @@ const TRUST_ITEMS = [
   "Named for Darosa · grace under foot",
 ];
 
-export default function HomePage() {
-  const featured = getFeaturedProducts(8);
-  const all      = PRODUCTS;
+export default async function HomePage() {
+  const all      = await getAllProducts();
+  const featured = (await getFeaturedProducts(8));
+  const heroProducts = (
+    await Promise.all(HERO_SLUGS.map((s) => getProductBySlug(s)))
+  ).filter((p): p is NonNullable<typeof p> => Boolean(p));
 
   return (
     <div className="bg-[var(--adisa-bone)]">
@@ -87,11 +98,7 @@ export default function HomePage() {
 
           {/* Hero collage of 3 shoes */}
           <div className="relative grid grid-cols-2 gap-3 sm:gap-4 lg:h-[560px]">
-            {[
-              PRODUCTS[0], // OLUWA Runner
-              PRODUCTS[7],  // OKE Boot
-              PRODUCTS[10], // EM EKA Brogue
-            ].map((p, i) => (
+            {heroProducts.map((p, i) => (
               <Link
                 href={`/shop/${p.slug}`}
                 key={p.slug}
@@ -153,22 +160,26 @@ export default function HomePage() {
             </div>
           </AnimateOnView>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {HERO_CATEGORIES.map((cat, i) => (
-              <Link
-                key={cat}
-                href={`/shop?category=${cat}`}
-                className="group flex h-32 flex-col items-center justify-center gap-2 border-2 border-black bg-white shadow-[5px_5px_0_#000] transition hover:-translate-y-1"
-              >
-                <Image
-                  src={PRODUCTS.find((p) => p.category === cat)!.imagePath}
-                  alt={categoryLabel(cat)}
-                  width={56}
-                  height={56}
-                  className="rounded border border-black object-cover transition group-hover:scale-110"
-                />
-                <span className="font-head text-sm font-bold uppercase tracking-wide">{categoryLabel(cat)}</span>
-              </Link>
-            ))}
+            {HERO_CATEGORIES.map((cat) => {
+              const sample = all.find((p) => p.category === cat);
+              if (!sample) return null;
+              return (
+                <Link
+                  key={cat}
+                  href={`/shop?category=${cat}`}
+                  className="group flex h-32 flex-col items-center justify-center gap-2 border-2 border-black bg-white shadow-[5px_5px_0_#000] transition hover:-translate-y-1"
+                >
+                  <Image
+                    src={sample.imagePath}
+                    alt={categoryLabel(cat)}
+                    width={56}
+                    height={56}
+                    className="rounded border border-black object-cover transition group-hover:scale-110"
+                  />
+                  <span className="font-head text-sm font-bold uppercase tracking-wide">{categoryLabel(cat)}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

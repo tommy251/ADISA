@@ -1,10 +1,12 @@
-import Image from "next/image";
 import Link from "next/link";
-import { PRODUCTS, categoryLabel } from "@/lib/products";
+import { getAllProducts, categoryLabel } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { AnimateOnView } from "@/components/site/AnimateOnView";
 import type { ProductCategory } from "@/lib/types";
 import type { Metadata } from "next";
+
+// Always fetch fresh from Supabase so admin edits show up immediately.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Shop all shoes — ADISA ·Àdísà·",
@@ -23,7 +25,7 @@ export default async function ShopPage({
   const { category, q, sort } = await searchParams;
   const cat = (category as ProductCategory) || undefined;
 
-  let products = PRODUCTS.slice();
+  let products = (await getAllProducts()).slice();
   if (cat) products = products.filter((p) => p.category === cat);
   if (q) {
     const needle = q.toLowerCase().trim();
@@ -142,9 +144,4 @@ function buildSortHref(sort: string, cat?: string, q?: string) {
   if (q)   params.set("q", q);
   params.set("sort", sort);
   return `/shop?${params.toString()}`;
-}
-
-// Static generation: one page per known sort for snappy navigation
-export function generateStaticParams() {
-  return CATEGORIES.map((c) => ({ category: c }));
 }
