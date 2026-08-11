@@ -1,6 +1,10 @@
 // ============================================================
 //  ADISA product catalog - source-of-truth seed data.
-//  One entry per downloaded shoe image in /public/shoes/.
+//
+//  Each product lives at /public/products/<slug>/NN.png (one
+//  folder per shoe). imagePath is the first image (01.png);
+//  extraImages is every other image in the same folder — used
+//  by the ImageCarousel on the product detail page.
 //
 //  These rows are also pushed to Supabase on first run, but
 //  everything reads from them locally so the site works even
@@ -9,94 +13,552 @@
 import type { Product } from "./types";
 import { convertToAdisaPrice } from "./pricing";
 
-const SIZES_SMALL  = [6, 7, 8, 9];
-const SIZES_STD    = [6, 7, 8, 9, 10, 11];
-const SIZES_WIDE   = [7, 8, 9, 10, 11, 12, 13];
+// Image folder URL base — must match the filesystem slug exactly.
+const IMG = (slug: string, n: number) => `/products/${slug}/${String(n).padStart(2, "0")}.png`;
+
+// Helper to build a [01..N] image list for a product folder.
+const ALL_IMAGES = (slug: string, count: number): string[] =>
+  Array.from({ length: count }, (_, i) => IMG(slug, i + 1));
 
 interface RawShoe {
   slug: string;
   name: string;
-  file: string;
   sourcePrice: number; // ₦ in the source country
+  imageCount: number;
   sizes: number[];
   colors: string[];
   category: Product["category"];
-  shortDesc: string;
+  shortDesc: string; // single-sentence summary used by product cards
+  description: string; // full description, gender-rewritten as men's
+  rating: number;
+  reviews: number;
 }
 
-// File IDs (without .png) from your Drive
+// ============================================================
+//  29 products. Descriptions are taken from the supplier
+//  .docx files (see /public/products/<slug>/) and lightly
+//  rewritten to present every shoe as a MEN's shoe line, per
+//  ADISA brand direction.
+// ============================================================
 const SHOES: RawShoe[] = [
-  { slug: "oluwa-runner",       name: "OLUWA Runner",         file: "1-qJSr_PPQHNuCL5-QlNi_2YuYl4Zechj", sourcePrice: 8500, sizes: SIZES_STD, colors: ["Black","White"], category: "sneakers", shortDesc: "Lightweight breathable running shoe with a cushioned heel and durable rubber sole for everyday wear." },
-  { slug: "darosa-oxford",      name: "DAROSA Oxford",        file: "10N5lr89eOLZ5hS1fJpDa3tH00ZFBmDEK", sourcePrice: 15000, sizes: SIZES_STD, colors: ["Black","Brown"], category: "formal", shortDesc: "A timeless Oxford silhouette in premium leather, Goodyear-welted sole, padded insole — an elegant men's formal shoe." },
-  { slug: "iroko-boot",         name: "IROKO Boot",           file: "10zIYeCgkqyZrimCFN3sILsaNQ_Et1fDn", sourcePrice: 12000, sizes: SIZES_WIDE, colors: ["Brown","Black"], category: "boots", shortDesc: "All-day city boot: water-resistant upper, ankle support, cushioned sole. Built for Lagos streets." },
-  { slug: "oris-trekker",       name: "ORIS Trekker",         file: "11UjW1nXPno6B95e36KYN-Wlu_f7yX8xZ", sourcePrice: 9000, sizes: SIZES_WIDE, colors: ["Khaki","Olive"], category: "boots", shortDesc: "Hiking-inspired boot with grippy lugged outsole and a cushioned EVA midsole for men who move on rough paths." },
-  { slug: "obinze-court",       name: "OBINZE Court",         file: "12SkfD_9pXwR6625d9PsYgipW4h0y73uC", sourcePrice: 8800, sizes: SIZES_STD, colors: ["White","Navy"], category: "sneakers", shortDesc: "A minimalist leather court sneaker — clean lines, soft footbed and a vulcanised rubber outsole." },
-  { slug: "sango-trainer",      name: "SANGO Trainer",        file: "12buWw_pZLkDWib13gmvZgsvQ6-4_8usk", sourcePrice: 11500, sizes: SIZES_WIDE, colors: ["Black","Red"], category: "athletic", shortDesc: "Cushioned road trainer with engineered mesh upper and responsive foam midsole — built for the daily run." },
-  { slug: "ade-loafer",         name: "ADE Loafer",           file: "12pUyV9og-s-Di09x-ZQ1K-uhCMXy0sCy", sourcePrice: 10500, sizes: SIZES_STD, colors: ["Tan","Black"], category: "loafers", shortDesc: "Slip-on penny loafer in soft suede with a leather footbed — a quiet flex for business-casual days." },
-  { slug: "okechukwu-boot",      name: "OKE Boot",             file: "15Fh2sRJcsRYgie-_Dpspbor1sOfBbJnj", sourcePrice: 14000, sizes: SIZES_WIDE, colors: ["Black"], category: "boots", shortDesc: "Chelsea boot silhouette with elastic side panels and a stacked heel — sharp for trousers or jeans." },
-  { slug: "ore-formal",         name: "ORE Formal",          file: "16VYU37IbweHeVCQ4578GmbdO4IEmwEPy", sourcePrice: 16000, sizes: SIZES_STD, colors: ["Black"], category: "formal", shortDesc: "Cap-toe formal in polished calf leather with a Blake-stitched sole — the wedding / boardroom staple." },
-  { slug: "olu-high",           name: "OLU High-Top",        file: "179XdhBE0bwU2jOepvli2aC5K9SSDimOG", sourcePrice: 9200, sizes: SIZES_STD, colors: ["Black","Cream"], category: "sneakers", shortDesc: "Padded-collar high-top sneaker in soft canvas with a quiet ankle-hugging fit." },
-  { slug: "tunde-sandal",       name: "TUNDE Sandal",        file: "1Abtad6UhwrlY_t-80BGaRE5Jk-hD5tuG", sourcePrice: 8000, sizes: SIZES_SMALL, colors: ["Brown"], category: "sandals", shortDesc: "Strappy leather slide with moulded footbed — breathable, easy, and dignified." },
-  { slug: "emeka-brogue",       name: "EMEKA Brogue",        file: "1Dminvtv1CDXJP0FtKBy5ntPwfzCAJKiI", sourcePrice: 17000, sizes: SIZES_STD, colors: ["Burgundy","Black"], category: "formal", shortDesc: "Wingtip brogue in burnished leather — broguing detail that earns a second look without losing authority." },
-  { slug: "baba-slipon",        name: "BABA Slip-On",        file: "1Hm0ugScYj7qHs02Gi0LNi_tM-u9A32Jj", sourcePrice: 9500, sizes: SIZES_STD, colors: ["Grey"], category: "loafers", shortDesc: "Padded collar slip-on with elastic gusset for an instant pull-on-and-go day shoe." },
-  { slug: "ola-chukka",        name: "OLA Chukka",          file: "1J825EJtVZBLG08tDGMKcq7BdBnMtW92C", sourcePrice: 11000, sizes: SIZES_WIDE, colors: ["Sand","Brown"], category: "boots", shortDesc: "Ankle-high chukka in suede with a crepe-textured sole — quiet, comfortable, classic." },
-  { slug: "femi-lowcut",        name: "FEMI Low-Cut",        file: "1J8NSo_aVXH5GOT1KwMSz5keA6K5XHoMC", sourcePrice: 8500, sizes: SIZES_SMALL, colors: ["White","Cream"], category: "sneakers", shortDesc: "Low-cut canvas sneaker with a vintage court profile and soft comfort insole." },
-  { slug: "tope-shoe",          name: "TOPE Court",          file: "1NfHnJCAyyEdW7whumFH_oOlhbsTsgJq-", sourcePrice: 9000, sizes: SIZES_STD, colors: ["Black"], category: "sneakers", shortDesc: "All-black court shoe — a single tone, one statement, day-to-night ready." },
-  { slug: "yemi-runner",        name: "YEMI Runner",         file: "1PWuBdFfCD63kUIadQYFeH0Rh0Ma86lq-", sourcePrice: 11500, sizes: SIZES_WIDE, colors: ["Blue","Black"], category: "athletic", shortDesc: "Distance trainer with a rockered midsole for forward momentum and a stretch-knit upper for breathability." },
-  { slug: "kola-derby",         name: "KOLA Derby",          file: "1PaxNEJSShtcfRnZMLpJbHDaAdbq9sGx9", sourcePrice: 13000, sizes: SIZES_STD, colors: ["Brown"], category: "formal", shortDesc: "Open-laced derby in tan leather — versatile between suit and denim." },
-  { slug: "bayo-boot",          name: "BAYO Boot",           file: "1QFw26FCr6pZlnY130hF8WZQmvyFkzC90", sourcePrice: 12500, sizes: SIZES_WIDE, colors: ["Brown"], category: "boots", shortDesc: "A round-toe work boot in oiled pull-up leather with a cork-bed midsole and a weatherproof feel." },
-  { slug: "kayode-court",       name: "KAYODE Court",        file: "1Q_bdVeqjPux4IaRHWlgHqiK1Q9l49wOT", sourcePrice: 9500, sizes: SIZES_STD, colors: ["White"], category: "sneakers", shortDesc: "Crisp white court sneaker with a leather upper and soft terry lining." },
-  { slug: "adeola-runner",     name: "ADEOLA Runner",       file: "1R2C_235cecGzpRELaWhAXf8ETTpD6jQ9", sourcePrice: 11500, sizes: SIZES_WIDE, colors: ["Silver","Grey"], category: "athletic", shortDesc: "Neutral road runner with a cloud-soft midsole and reflective heel detailing." },
-  { slug: "olu-ceo",              name: "OLU CEO",              file: "1RICSlHe-UeF5Q_y-RBrdEbdy7B7LItH7", sourcePrice: 17500, sizes: SIZES_STD, colors: ["Black"], category: "formal", shortDesc: "Whole-cut formal in mirror-polished leather — a single piece of leather, sleek and ceremonial." },
-  { slug: "nonso-loafer",       name: "NONSO Loafer",        file: "1RSNIcvTg70kkq-c56CLM9X6hF2vFw4TH", sourcePrice: 9000, sizes: SIZES_STD, colors: ["Black"], category: "loafers", shortDesc: "Square-toe loafer in glossy patent-style leather — red-carpet ready, desk-day confident." },
-  { slug: "ife-sneaker",        name: "IFE Sneaker",        file: "1SWdA3Vnm7fHoJS4ig0iCAFy-LcN3snMC", sourcePrice: 10500, sizes: SIZES_STD, colors: ["Multi"], category: "sneakers", shortDesc: "Colour-blocked lifestyle sneaker with a soft cushioned midsole — comfort with a personality." },
-  { slug: "chidi-boot",          name: "CHIDI Boot",          file: "1SZk4k363LkEcSwtvO2mmmuynXfKZemmV", sourcePrice: 13500, sizes: SIZES_WIDE, colors: ["Black"], category: "boots", shortDesc: "Lace-up ankle boot with a side-zip and padded collar — all weather, all terrain." },
-  { slug: "segun-runner",        name: "SEGUN Runner",       file: "1V4XKY5OvC1mfGsVxzSP7kzAtN1TeoO2S", sourcePrice: 9000, sizes: SIZES_WIDE, colors: ["Black","White"], category: "athletic", shortDesc: "Stability road runner with a contoured heel and a breathable engineered-mesh upper." },
-  { slug: "obi-shoe",            name: "OBI Footwear",        file: "1VEFNs8MOBUzeTBSXkG7yWyITedzN341x", sourcePrice: 16500, sizes: SIZES_STD, colors: ["Oxblood"], category: "formal", shortDesc: "Whole-cut oxford in oxblood leather — the cult-classic evening-shoe silhouette." },
-  { slug: "taiwo-boot",          name: "TAIWO Boot",          file: "1Y6qYNnqd-VLc3ydpw_DyaonQku32o_m0", sourcePrice: 11500, sizes: SIZES_WIDE, colors: ["Brown"], category: "boots", shortDesc: "Desert boot in nubuck with a gum sole from the desert-war era, updated for the city." },
-  { slug: "kehinde-court",       name: "KEHINDE Court",       file: "1alJRTatQD2AO-lOHobIM1OkwN025jpd4", sourcePrice: 8800, sizes: SIZES_STD, colors: ["White"], category: "sneakers", shortDesc: "Vintage tennis court silhouette, refreshed with a clean white leather upper." },
-  { slug: "sola-slip",            name: "SOLA Slip-On",        file: "1cb1sPR1SPUTOS3Ngs9r4wsCy1VlyaDBO", sourcePrice: 9000, sizes: SIZES_STD, colors: ["Grey"], category: "loafers", shortDesc: "Soft suede slip-on with a hidden elastic that hugs the foot without laces." },
-  { slug: "wale-loafer",         name: "WALE Loafer",         file: "1d-XgpZjLu84Y0Cfpcc7-_F5AEWmG5IVo", sourcePrice: 9500, sizes: SIZES_STD, colors: ["Black","Burgundy"], category: "loafers", shortDesc: "Tassel-detail penny loafer in a hand-polished leather upper." },
-  { slug: "chinwe-sand",          name: "CHINWE Sandal",       file: "1ddGMWTpaiR40XFDrmsCEn_ZYDHfIjgUY", sourcePrice: 8000, sizes: SIZES_SMALL, colors: ["Brown"], category: "sandals", shortDesc: "Two-strap leather sandal with a contoured footbed — built for warm-climate commuting." },
-  { slug: "kunle-boot",           name: "KUNLE Boot",          file: "1fhxU25p7_cKKA-D6ntrXUOuyC4hpNEPw", sourcePrice: 12500, sizes: SIZES_WIDE, colors: ["Tan","Brown"], category: "boots", shortDesc: "Lace-up field boot in waxy grain leather with a waxy finish and grippy rubber outsole." },
-  { slug: "nkechi-athletic",      name: "NKECHI Athletic",     file: "1i4PlfnU2Xzyi8IvLMETxONi35-445Ok_", sourcePrice: 12000, sizes: SIZES_WIDE, colors: ["Teal","Black"], category: "athletic", shortDesc: "Trail runner with a stone-plate underfoot and a lugged outsole for off-road grip." },
-  { slug: "tito-trainer",         name: "TITO Trainer",        file: "1iOJiww5-DpsZD1pvA73KU_2ow_xtK2Xa", sourcePrice: 11500, sizes: SIZES_WIDE, colors: ["Orange","Grey"], category: "athletic", shortDesc: "Pronation-support road trainer with a structured medial post and a wide base." },
-  { slug: "ebuka-formal",         name: "EBUKA Formal",        file: "1ibXDuIxGmZJF28wBkYlx7s3SDLr-_13E", sourcePrice: 16000, sizes: SIZES_STD, colors: ["Black"], category: "formal", shortDesc: "Patent formal oxford with a grosgrain bow — made for the occasions that mark a man." },
-  { slug: "iman-court",           name: "IMAN Court",          file: "1ixgZAfN1CSuBZCM1uMXt_yXUILefv0D-", sourcePrice: 8500, sizes: SIZES_STD, colors: ["White","Black"], category: "sneakers", shortDesc: "Two-tone court sneaker — a soft bath of leather, a vulcanised sole." },
-  { slug: "sola-derby",           name: "SOLA Derby",          file: "1j_QrJKeDdGL7b0Uie-vzDqUkwiQthfyW", sourcePrice: 13000, sizes: SIZES_STD, colors: ["Tan"], category: "formal", shortDesc: "Aerator derby with a blucher lacing and a hand-stained tan leather upper." },
-  { slug: "bode-boot",             name: "BODE Boot",          file: "1jamWz3Sd9SG-s0cVuiXhzLPM8Fdws3dF", sourcePrice: 11500, sizes: SIZES_WIDE, colors: ["Espresso"], category: "boots", shortDesc: "Lace-up espresso boot with a side-zip and stack heel — city or country." },
-  { slug: "gboyega-high",          name: "GBOYEGA High",        file: "1krJd7e8x9tHX7UB1_ROQxd0u-8R8_5rb", sourcePrice: 9000, sizes: SIZES_STD, colors: ["Red"], category: "sneakers", shortDesc: "Skater-style high-top with a padded tongue and reinforced ollie zone — for the city skater kid." },
-  { slug: "ndidi-sand",            name: "NDIDI Slide",         file: "1l8LH3lfYyBtTnpmXy-A6iqw6c3JURor8", sourcePrice: 8000, sizes: SIZES_SMALL, colors: ["Brown"], category: "sandals", shortDesc: "Single-strap cushioned slide that wears like a memory." },
-  { slug: "ifeanyi-casual",        name: "IFEANYI Casual",      file: "1lYKmekcHwLgbDjnFexHx61OrsO457VNQ", sourcePrice: 8200, sizes: SIZES_STD, colors: ["White"], category: "sneakers", shortDesc: "Old-school cup-sole sneaker with a soft leather upper and an easy-lace tongue." },
-  { slug: "zino-oxford",           name: "ZINO Oxford",        file: "1m8Y2rXdlGcUqQqDD6vVciJvpPYWdAyS-", sourcePrice: 14000, sizes: SIZES_STD, colors: ["Black"], category: "formal", shortDesc: "Hand-finished oxford with a closed-lacing silhouette — the all-purpose menswear classic." },
-  { slug: "uche-penny",            name: "UCHE Penny",         file: "1nbaj255a9dcZSW87-5VO2JS0Dtnnz5TT", sourcePrice: 9000, sizes: SIZES_STD, colors: ["Tan"], category: "loafers", shortDesc: "Classic penny loafer — the leather saddle creases the way you walk." },
-  { slug: "emeka-slip",            name: "EMEKA Slip-On",      file: "1oAwtC9xre8Hn7OVQnGguOnN8uxtQ9UfA", sourcePrice: 9500, sizes: SIZES_STD, colors: ["Navy"], category: "loafers", shortDesc: "Slip-on driver in deep navy suede with a dotted-rubber outsole." },
-  { slug: "gbenga-court",          name: "GBENGA Court",       file: "1p1FdJfYC-atK_PKY0uEZcJ6N7R3k-SOj", sourcePrice: 8800, sizes: SIZES_STD, colors: ["Black","Cream"], category: "sneakers", shortDesc: "Cup-sole sneaker with padding at the collar and a stitched-down toe cap." },
-  { slug: "segun-brogue",          name: "SEGUN Brogue",       file: "1pqNFt9dbf4TC58uvkjxoC3fZBkxQzp27", sourcePrice: 13500, sizes: SIZES_STD, colors: ["Tan"], category: "formal", shortDesc: "Longwing brogue in tan with a full broguing pattern and a single oak-tanned sole." },
-  { slug: "dayo-derby",            name: "DAYO Derby",          file: "1veLKP72dFDH7A8JK1P9W1O9Md8ZVGrt4", sourcePrice: 13000, sizes: SIZES_STD, colors: ["Brown"], category: "formal", shortDesc: "Plain-toe derby with a relaxed last and a hand-finished brown patina." },
-  { slug: "ola-court",             name: "OLA Court",          file: "1xWbxosWdjzYlAuq6DGF_dGLgeuzBUjMh", sourcePrice: 8800, sizes: SIZES_STD, colors: ["Cream"], category: "sneakers", shortDesc: "Soft cream leather court shoe with a vulcanised midsole and warm-weather feel." },
-  { slug: "nina-canvas",           name: "NINA Canvas",         file: "1yO9InkijzW8twYL5x_xTAGTLXEf8dBOO", sourcePrice: 8200, sizes: SIZES_STD, colors: ["Black","White"], category: "sneakers", shortDesc: "Hemp-canvas low-top with a recycled rubber sole — light, breathable, daily." },
+  {
+    slug: "adisa-cosy-loafer",
+    name: "ADISA Cosy Loafer",
+    sourcePrice: 17188,
+    imageCount: 12,
+    sizes: [6, 6.5, 7.5, 8, 9, 9.5],
+    colors: ["Black", "Beige", "Brown"],
+    category: "loafers",
+    shortDesc: "Versatile lazy-day loafer with a low heel and soft footbed for all-day wear.",
+    description:
+      "An everyday men's slip-on loafer refined for the man who moves quietly through his day. " +
+      "Plain round toe in supple man-made fibre, solid colour finish, and a non-fatiguing low heel " +
+      "that carries you from morning commute to evening schmooze without protest. Wears like a " +
+      "sneaker, looks like a loafer. Brand: ADISA Select. Available in three colours. Free insured " +
+      "shipping; arrives in Nigeria in as little as 5 days.",
+    rating: 4.8,
+    reviews: 882,
+  },
+  {
+    slug: "adisa-classic-runner",
+    name: "ADISA Classic Runner",
+    sourcePrice: 11979,
+    imageCount: 7,
+    sizes: [6, 6.5, 7.5, 8, 8.5],
+    colors: ["Grey", "Brown"],
+    category: "sneakers",
+    shortDesc: "Lace-up low-top sneaker with a TPR sole and a clean retro silhouette.",
+    description:
+      "A classic men's casual trainer built on a low-top chassis. Lace-up closure locks the foot " +
+      "down for a secure, adjustable fit; the TPR sole gives traction and flex for street and road. " +
+      "Solid colour pattern, retro preppy silhouette — a year-round wardrobe staple that pairs with " +
+      "jeans, chinos, or a tracksuit. 4.8 / 5 reviewer rating; fits true to size for 95% of men.",
+    rating: 4.8,
+    reviews: 882,
+  },
+  {
+    slug: "adisa-zosivc-trainer",
+    name: "ADISA ZOSIVC Trainer",
+    sourcePrice: 17924,
+    imageCount: 11,
+    sizes: [6, 7, 7.5, 8.5],
+    colors: ["White", "Black", "Green", "Purple", "Burgundy", "Yellow", "Blue"],
+    category: "sneakers",
+    shortDesc: "Lace-up soft-soled sports trainer in a bold eight-colour palette.",
+    description:
+      "A men's lightweight sports shoe for the everyday walkabout. Soft-soled lace-up construction " +
+      "lets you wear it from the office to the gym without a change. Engineered for breathability and " +
+      "a quiet stride. Eight colour options mean you can match it to your fit, your mood, or your team. " +
+      "Standard shipping is free on all orders.",
+    rating: 4.6,
+    reviews: 410,
+  },
+  {
+    slug: "adisa-dexun-skater",
+    name: "ADISA DeXun Skater",
+    sourcePrice: 14164,
+    imageCount: 7,
+    sizes: [6, 6.5, 7, 8, 8.5],
+    colors: ["White Grey", "Black"],
+    category: "sneakers",
+    shortDesc: "Skate-style sneaker with a solid colourway, lace-up closure, all-season build.",
+    description:
+      "A men's skate shoe built to take a beating. Lace-up closure keeps the foot locked in for " +
+      "skateboard tricks or city commutes; the solid colourway stays clean even after a long week. " +
+      "All-season build means this sneaker runs through spring rain, summer pavement and harmattam " +
+      "with the same grip. 4.9 / 5 reviewer rating with over 1.1K sold. Fits true to size for 88% of men.",
+    rating: 4.9,
+    reviews: 1120,
+  },
+  {
+    slug: "adisa-cosy-flat",
+    name: "ADISA Cosy Flat",
+    sourcePrice: 19047,
+    imageCount: 4,
+    sizes: [4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5],
+    colors: ["Black", "Khaki", "Brown"],
+    category: "loafers",
+    shortDesc: "Round-toe flat loafer with a simple low heel for everyday comfort.",
+    description:
+      "A men's flat loafer in plain round toe — the quietest shoe in the ADISA line. Solid colourway, " +
+      "simple low heel, comfortable flat sole that wears like a memory after a week. Suits office wear, " +
+      "easy travel, and weekend alike. Free shipping on all orders; arrives in Nigeria in as little as 5 days.",
+    rating: 4.6,
+    reviews: 240,
+  },
+  {
+    slug: "adisa-retro-flats",
+    name: "ADISA Retro Court",
+    sourcePrice: 16382,
+    imageCount: 8,
+    sizes: [5, 6.5, 7, 8, 8.5, 9.5, 10],
+    colors: ["Black", "White/Black", "White/Khaki"],
+    category: "sneakers",
+    shortDesc: "Retro low-top sneaker with a gum rubber sole and a three-colour palette.",
+    description:
+      "A men's retro court silhouette refreshed for the city. Classic retro design with a plain toe " +
+      "and solid colourway; the gum rubber sole is the tell — that distinctive foxing line that keeps " +
+      "the shoe timeless. Lace-up closure locks the fit for daily wear. Three colour ways: clean Black, " +
+      "White-with-Black, and White-with-Khaki to match anything you put on.",
+    rating: 4.5,
+    reviews: 320,
+  },
+  {
+    slug: "adisa-versatile-loafer",
+    name: "ADISA Versatile Loafer",
+    sourcePrice: 17943,
+    imageCount: 9,
+    sizes: [4, 5, 6, 6.5, 7.5, 8, 9, 9.5],
+    colors: ["Black", "Beige", "Brown"],
+    category: "loafers",
+    shortDesc: "Fashionable slip-on loafer with a non-fatiguing low heel.",
+    description:
+      "An easy men's everyday loafer. Non-fatiguing low heel, plain toe, solid colourway — pure easy. " +
+      "Three classic colours to choose from. Slip-on construction makes this a one-second shoe when " +
+      "you're walking out the door. Free shipping; arrives in Nigeria in as little as 5 days.",
+    rating: 4.7,
+    reviews: 510,
+  },
+  {
+    slug: "adisa-wklniag-runner",
+    name: "ADISA Wklniag Runner",
+    sourcePrice: 14077,
+    imageCount: 5,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8],
+    colors: ["Brown", "Black", "Grey", "Sand"],
+    category: "sneakers",
+    shortDesc: "Vintage-style flat runner with a lightweight fabric upper for all-day wear.",
+    description:
+      "A men's casual sneaker cut from man-made fibers and a breathable fabric upper — engineered for " +
+      "a lightweight feel that holds up to all-day wear. Vintage plain-toe silhouette carries a retro " +
+      "preppy pedigree. Lace-up closure secures the fit for casual or running use. 4.6 stars, over 34K " +
+      "sold — one of the most-loved silhouettes in the catalogue.",
+    rating: 4.6,
+    reviews: 612,
+  },
+  {
+    slug: "adisa-cosy-buckle",
+    name: "ADISA Buckle Loafer",
+    sourcePrice: 19310,
+    imageCount: 7,
+    sizes: [6, 6.5, 7, 7.5, 8, 8.5],
+    colors: ["Beige", "Brown"],
+    category: "loafers",
+    shortDesc: "Loafer with a decorative strap and metal buckle accent for sharp men.",
+    description:
+      "A men's loafer with personality — a decorative strap and metal buckle accent lift it above " +
+      "the standard slip-on. Cut from supple man-made fibre, lined for comfort, finished in two " +
+      "earth-friendly colours. Stand out without standing on ceremony.",
+    rating: 4.8,
+    reviews: 180,
+  },
+  {
+    slug: "adisa-softon-loafer",
+    name: "ADISA Soft-On Loafer",
+    sourcePrice: 15845,
+    imageCount: 3,
+    sizes: [5.5, 6, 6.5, 7.5, 8, 8.5],
+    colors: ["Pink", "Beige", "Brown"],
+    category: "loafers",
+    shortDesc: "Full-coverage soft-soled slip-on with easy daily comfort.",
+    description:
+      "A men's full-coverage slip-on built for daily comfort. Soft-soled construction keeps the walk " +
+      "quiet and the footbed forgiving, no matter how many hours you put in. Simple, stylish, " +
+      "versatile — a one-shoe answer to most of the week. 4.5 stars. Fits true to size for 82% of men.",
+    rating: 4.5,
+    reviews: 566,
+  },
+  {
+    slug: "adisa-textured-sneaker",
+    name: "ADISA Textured Court",
+    sourcePrice: 16356,
+    imageCount: 6,
+    sizes: [5.5, 6, 6.5, 7, 7.5],
+    colors: ["Coffee Brown", "Green", "Black"],
+    category: "sneakers",
+    shortDesc: "Casual lace-up sneakers with a textured gum sole and panel detail.",
+    description:
+      "A men's casual lace-up sneaker with a textured gum sole and paneled upper — the kind of detail " +
+      "that earns a second look without saying a word. Three colourways including a deep Coffee Brown " +
+      "and an easy Green. 4.8 stars with 11K+ sold. Fits true to size for 94% of men. Standard free " +
+      "shipping; arrives in Nigeria in as little as 5 days.",
+    rating: 4.8,
+    reviews: 1534,
+  },
+  {
+    slug: "adisa-allmatch-sneaker",
+    name: "ADISA All-Match Sneaker",
+    sourcePrice: 13108,
+    imageCount: 5,
+    sizes: [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5],
+    colors: ["White", "White/Green", "White/Brown"],
+    category: "sneakers",
+    shortDesc: "All-match white sneaker with subtle colour accents and a wide-fit comfort option.",
+    description:
+      "A men's all-match sneaker in white with quiet colour accents — for men who want a clean shoe " +
+      "that still has a personality. Soft insole, breathable upper, and a wide-fit option that gives " +
+      "extra room for those who need it. Multi-scene design built for long walks and daily commutes. " +
+      "4.7 stars, 7.9K+ sold. Fits true to size for 92% of men.",
+    rating: 4.7,
+    reviews: 219,
+  },
+  {
+    slug: "adisa-breathable-runner",
+    name: "ADISA Breathable Runner",
+    sourcePrice: 14236,
+    imageCount: 7,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5],
+    colors: ["White"],
+    category: "athletic",
+    shortDesc: "Breathable runner engineered for outdoor use across all four seasons.",
+    description:
+      "A men's breathable runner built for outdoor miles — engineered for skateboarding, running, " +
+      "and the long road that connects them. Suitable for all seasons; structured for pronation " +
+      "support so you ride steady on long days. 4.7 stars with 9K+ sold. Standard free shipping.",
+    rating: 4.7,
+    reviews: 410,
+  },
+  {
+    slug: "adisa-battle-athletic",
+    name: "ADISA Battle Athletic",
+    sourcePrice: 17779,
+    imageCount: 12,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 12.5],
+    colors: ["Green", "Yellow", "Black/Red"],
+    category: "athletic",
+    shortDesc: "Men's running athletic shoe with lace closure and a fabric insole.",
+    description:
+      "A men's running athletic shoe from the BATTLE SHEEP line — built for the daily run and the " +
+      "daily walkabout alike. Lace closure for a secure adjustable fit; fabric insole for soft " +
+      "cushioning underfoot; solid colourway that wears clean year-round. 4.7 stars with 56K+ sold and " +
+      "8,708 reviews — one of the most-repurchased shoes in the catalogue. Fits true to size for 94% " +
+      "of men. Free standard shipping; arrives in Nigeria in as little as 5 days.",
+    rating: 4.7,
+    reviews: 8708,
+  },
+  {
+    slug: "adisa-skate-casual",
+    name: "ADISA Skate Casual",
+    sourcePrice: 13278,
+    imageCount: 4,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
+    colors: ["White"],
+    category: "sneakers",
+    shortDesc: "Casual lace-up skate sneaker with a solid colour flat sole.",
+    description:
+      "A men's skate-style sneaker cut for everyday casual wear. Lace-up closure; solid colourway; " +
+      "flat-sole construction for a stable ride. Versatile enough for denim, shorts, or trousers. " +
+      "4.4 stars with 5.5K+ sold. Fits true to size for 84% of men.",
+    rating: 4.4,
+    reviews: 58,
+  },
+  {
+    slug: "adisa-nonslip-laceup",
+    name: "ADISA Herringbone Court",
+    sourcePrice: 13553,
+    imageCount: 8,
+    sizes: [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5],
+    colors: ["Black", "White"],
+    category: "sneakers",
+    shortDesc: "EVA-sole sneaker with herringbone pattern for non-slip daily wear.",
+    description:
+      "A men's non-slip daily sneaker. The herringbone EVA outsole grips wet and dry floors alike — " +
+      "purpose-built for the commute, the office, the date, the trip. Lace-up closure lets you tune " +
+      "the fit. Two classic colourways. 5.0 stars with 9 reviews; ranked #7 Best Seller from this line.",
+    rating: 5.0,
+    reviews: 9,
+  },
+  {
+    slug: "adisa-sports-outdoor",
+    name: "ADISA Sports Outdoor",
+    sourcePrice: 11763,
+    imageCount: 7,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 12],
+    colors: ["Black", "Grey", "Yellow"],
+    category: "athletic",
+    shortDesc: "Men's sports & outdoor shoe with a breathable knit upper and lace closure.",
+    description:
+      "A men's sports & outdoor shoe engineered for the long road and the rough ground. Breathable " +
+      "knit upper keeps the foot cool under load; lace-up closure secures the fit through any activity; " +
+      "the outsole is built for grip and the inner collar features a quiet pattern detail. 4.7 stars " +
+      "with 2,765 ratings. Fits true to size for 95% of men. Standard free shipping; arrives in " +
+      "Nigeria in as little as 5 days.",
+    rating: 4.7,
+    reviews: 2765,
+  },
+  {
+    slug: "adisa-road-runner",
+    name: "ADISA Road Runner",
+    sourcePrice: 10987,
+    imageCount: 6,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5],
+    colors: ["Blue", "Green", "Black", "Pink", "White/Grey"],
+    category: "athletic",
+    shortDesc: "Classic retro road runner with a soft-soled height-increasing TPR sole.",
+    description:
+      "A men's classic retro road runner. Fabric upper and man-made fibres give a breathable build " +
+      "that helps the foot stay cool through daily fitness and outdoor use. Stabilizing support and " +
+      "pronation control keep the ride level on long runs. A soft, height-increasing TPR sole adds " +
+      "comfort and a quiet lift for casual outings — shopping, dating, daily walkabout. 4.9 stars with " +
+      "49 reviews. Fits true to size for 92% of men.",
+    rating: 4.9,
+    reviews: 49,
+  },
+  {
+    slug: "adisa-platform-loafer",
+    name: "ADISA Platform Loafer",
+    sourcePrice: 16191,
+    imageCount: 2,
+    sizes: [6, 6.5, 7, 7.5, 8, 8.5],
+    colors: ["Black", "Brown", "Tan", "Leopard"],
+    category: "loafers",
+    shortDesc: "Platform height-increasing low-top loafer for all-day casual comfort.",
+    description:
+      "A men's platform loafer with a quiet height-increasing lift. Low-top silhouette gives a " +
+      "comfortable fit around the ankle for all-day casual wear; lace-up closure secures the foot. " +
+      "Four colourways including a Leopard print for the man who wants to be remembered. 4.8 stars " +
+      "with 199 reviews; #2 Best Seller from this line. Fits true to size for 92% of men.",
+    rating: 4.8,
+    reviews: 199,
+  },
+  {
+    slug: "adisa-stability-runner",
+    name: "ADISA Stability Runner",
+    sourcePrice: 12282,
+    imageCount: 15,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
+    colors: ["Black", "Grey", "White"],
+    category: "athletic",
+    shortDesc: "Stability road runner with pronation support for flat-footed men.",
+    description:
+      "A men's road-running shoe built around stability. Pronation support keeps the foot aligned " +
+      "for flat-footed runners; the low-top upper height lets the ankle move freely through the " +
+      "stride. Lace-up closure secures the fit through athletic activity. 4.4 stars. Fits true to " +
+      "size for 86% of men. Pre-order; delivery estimated between August 8–20.",
+    rating: 4.4,
+    reviews: 7,
+  },
+  {
+    slug: "adisa-slipon-sport",
+    name: "ADISA Slip-On Sport",
+    sourcePrice: 13388,
+    imageCount: 9,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 12, 12.5, 13],
+    colors: ["Black", "Grey"],
+    category: "loafers",
+    shortDesc: "Slip-on sport shoe suitable for running, training, and hiking.",
+    description:
+      "A men's slip-on sport shoe that takes you from running to training to hiking without unlacing. " +
+      "Slip-on closure for quick, hassle-free wear; solid colourway keeps it clean. Designed for " +
+      "all-season wear across athletic, training, and outdoor use. 4.6 stars with 31K+ sold and 3,625 " +
+      "reviews. Fits true to size for 95% of men.",
+    rating: 4.6,
+    reviews: 3625,
+  },
+  {
+    slug: "adisa-lifestyle-lowtop",
+    name: "ADISA Lifestyle Low-Top",
+    sourcePrice: 15625,
+    imageCount: 9,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11],
+    colors: ["Black", "White"],
+    category: "sneakers",
+    shortDesc: "Fashion lace-up low-top with a fabric lining for comfortable all-day walking.",
+    description:
+      "A men's lifestyle low-top sneaker built for daily casual and outdoor walking. Round toe, " +
+      "fabric lining, and a low-top profile keep the foot comfortable through long days. Trendy " +
+      "minimalist styling lets it pair with anything. All-season wear — spring rain to harmattam " +
+      "dust. 4.7 stars with 3.1K+ sold and 364 reviews. Fits true to size for 94% of men.",
+    rating: 4.7,
+    reviews: 364,
+  },
+  {
+    slug: "adisa-breathable-trainer",
+    name: "ADISA Breathable Trainer",
+    sourcePrice: 11332,
+    imageCount: 8,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11.5],
+    colors: ["Black", "Grey"],
+    category: "athletic",
+    shortDesc: "Breathable light low-top training shoe with a durable non-slip outdoor sole.",
+    description:
+      "A men's breathable trainer — light, low-top, and built for the daily run. The non-slip " +
+      "outsole gives traction on rough outdoor ground; engineered mesh upper keeps the foot cool " +
+      "when the work picks up. Two colourways. 5.0 stars. Free standard shipping; arrives in Nigeria " +
+      "in as little as 5 days.",
+    rating: 5.0,
+    reviews: 30,
+  },
+  {
+    slug: "adisa-fashion-loafer",
+    name: "ADISA Fashion Loafer",
+    sourcePrice: 10979,
+    imageCount: 11,
+    sizes: [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
+    colors: ["Black", "Tan", "Brown", "Burgundy"],
+    category: "loafers",
+    shortDesc: "Fashionable slip-on loafer suitable for both running and casual wear.",
+    description:
+      "A men's fashion slip-on loafer that bridges running shoe and casual shoe. Slip-on construction " +
+      "for fast mornings; the footbed is built for both comfort and some athletic give. Four " +
+      "colourways to match work, weekend, and travel fits. 4.7 stars with 1,355 reviews and 21K+ sold. " +
+      "Fits true to size for 94% of men. Standard free shipping; arrives in Nigeria in as little as 5 days.",
+    rating: 4.7,
+    reviews: 1355,
+  },
+  {
+    slug: "adisa-plover-loafer",
+    name: "ADISA Plover British Loafer",
+    sourcePrice: 13761,
+    imageCount: 9,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 11],
+    colors: ["Brown", "Black"],
+    category: "loafers",
+    shortDesc: "Retro British-style loafer with round toe and wear-resistant slip-on build.",
+    description:
+      "A men's doudou low-top casual loafer in a retro British silhouette. Slip-on closure for easy " +
+      "wear; round toe gives the foot room; wear-resistant build means the shoe keeps its composure " +
+      "through daily work commutes and casual outings. Two colourways. 4.8 stars with 792 sold. " +
+      "Fits true to size for 92% of men. Standard free shipping; arrives in Nigeria in as little as 5 days.",
+    rating: 4.8,
+    reviews: 47,
+  },
+  {
+    slug: "adisa-zhenyuez-slipon",
+    name: "ADISA Slip-On Summer",
+    sourcePrice: 12174,
+    imageCount: 5,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10.5],
+    colors: ["Black", "Beige", "Grey"],
+    category: "loafers",
+    shortDesc: "Summer minimalist slip-on loafer for casual daily wear and outdoor hiking.",
+    description:
+      "A men's summer slip-on built for the heat. Fabric upper and lining keeps the air moving; the " +
+      "slip-on closure is fast and forgiving. Suits daily casual wear, dining, and outdoor hiking — " +
+      "one shoe that goes anywhere in the warm months. Three colourways. 4.5 stars. Fits true to size " +
+      "for 87% of men.",
+    rating: 4.5,
+    reviews: 57,
+  },
+  {
+    slug: "adisa-tikp-thong",
+    name: "ADISA Thong Slide",
+    sourcePrice: 8019,
+    imageCount: 8,
+    sizes: [4.5, 5.5, 6.5, 7.5, 8.5, 9],
+    colors: ["Black", "Navy", "Brown", "Olive"],
+    category: "sandals",
+    shortDesc: "Men's textile thong sandal with woven strap, EVA sole, summer build.",
+    description:
+      "A men's casual thong sandal with a woven strap — purpose-built for hot summer days. EVA sole " +
+      "gives non-slip traction; EVA insole gives cushioning and comfort; the lightweight man-made " +
+      "fibre fabric upper lets the air through. Four colourways. 4.6 stars with 148 reviews and 2.1K+ " +
+      "sold. Fits true to size for 84% of men. Free standard shipping via Speedaf and GIG; arrives in " +
+      "Nigeria in as little as 5 days. 90-day returns, N1,600 credit for delays, return protection.",
+    rating: 4.6,
+    reviews: 148,
+  },
+  {
+    slug: "adisa-2026-casual",
+    name: "ADISA 2026 Casual Slide",
+    sourcePrice: 12105,
+    imageCount: 6,
+    sizes: [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
+    colors: ["Black"],
+    category: "sandals",
+    shortDesc: "2026 hot style single-strap slip-on sandal for beach, vacation, daily wear.",
+    description:
+      "A men's 2026 hot-style slip-on sandal. Single-strap construction keeps the foot secure; the " +
+      "slip-on closure makes for easy wear and a fit that holds. Designed for indoor and outdoor home " +
+      "use — beach, vacation, daily casual occasions, anywhere the warm weather carries you. Solid " +
+      "Black colourway. 4.5 stars with 96 reviews and 1.8K sold. Fits true to size for 87% of men. " +
+      "Free shipping via Speedaf and GIG; arrives in Nigeria in as little as 5 days.",
+    rating: 4.5,
+    reviews: 96,
+  },
+  {
+    slug: "adisa-homehot-slide",
+    name: "ADISA Woven Slide",
+    sourcePrice: 9896,
+    imageCount: 8,
+    sizes: [7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13],
+    colors: ["Brown", "Black"],
+    category: "sandals",
+    shortDesc: "Men's indoor / outdoor slip-on sandal with a non-slip woven build.",
+    description:
+      "A men's slip-on sandal built for indoor and outdoor wear. Non-slip woven design keeps the " +
+      "foot planted wet or dry. By HOMEHOT. Two colourways. 4.6 stars with 1,816 reviews and 28K+ sold; " +
+      "ranked #14 Best-Selling Item in Men's Sandals. Fits true to size for 95% of men. Free standard " +
+      "shipping via Speedaf and GIG; arrives in Nigeria in as little as 5 days.",
+    rating: 4.6,
+    reviews: 1816,
+  },
 ];
 
-export const PRODUCTS: Product[] = SHOES.map((s, idx) => ({
-  id: `seed-${idx + 1}`,
-  slug: s.slug.replace(/\s/g, ""),
-  name: s.name.trim(),
-  brand: "ADISA Select",
-  description: `${s.shortDesc} Available in UK sizes ${Math.min(...s.sizes)}${s.sizes.length ? "-" + Math.max(...s.sizes) : ""} (Nigeria ${(Math.min(...s.sizes) + 35)}-${Math.max(...s.sizes) + 35}).`,
-  imagePath: `/shoes/${s.file}.png`,
-  extraImages: [],
-  sourcePrice: s.sourcePrice,
-  salePrice: convertToAdisaPrice(s.sourcePrice),
-  currency: "NGN",
-  sizesUk: s.sizes,
-  colors: s.colors,
-  category: s.category,
-  rating: 4.4 + ((idx % 11) / 100) + (idx % 7) * 0.01,
-  reviews: 30 + ((idx * 7) % 200),
-  isFeatured: idx % 4 === 0,
-  inStock: true,
-}));
+// Build the public Product array. imagePath is the first image; the rest
+// (02..NN) become extraImages, used by the detail-page image carousel.
+export const PRODUCTS: Product[] = SHOES.map((s, idx) => {
+  const allImages = ALL_IMAGES(s.slug, s.imageCount);
+  return {
+    id: `seed-${idx + 1}`,
+    slug: s.slug,
+    name: s.name,
+    brand: "ADISA Select",
+    description: s.description,
+    imagePath: allImages[0],                  // /products/<slug>/01.png
+    extraImages: allImages.slice(1),          // /products/<slug>/02.png..NN.png
+    sourcePrice: s.sourcePrice,
+    salePrice: convertToAdisaPrice(s.sourcePrice),
+    currency: "NGN" as const,
+    sizesUk: s.sizes,
+    colors: s.colors,
+    category: s.category,
+    rating: s.rating,
+    reviews: s.reviews,
+    isFeatured: idx % 4 === 0,
+    inStock: true,
+  };
+});
 
 export const getProductBySlug = (slug: string): Product | undefined =>
   PRODUCTS.find((p) => p.slug === slug);

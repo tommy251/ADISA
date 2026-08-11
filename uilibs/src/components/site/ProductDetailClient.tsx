@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, use } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { Check, ShoppingBag, Star, Truck, ShieldCheck, ArrowLeft } from "lucide-react";
 import { useCart } from "@/store/cart";
-import { formatNGN, convertToAdisaPrice } from "@/lib/pricing";
+import { formatNGN } from "@/lib/pricing";
 import type { Product } from "@/lib/types";
 import { ProductCard } from "@/components/site/ProductCard";
-import { PRODUCTS } from "@/lib/products";
+import { ImageCarousel } from "@/components/ui/image-carousel";
 
 export default function ProductDetailClient({
   productPromise,
@@ -51,27 +50,14 @@ export default function ProductDetailClient({
       {/* main */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-2">
-          {/* image */}
-          <motion.div
-            className="relative aspect-[4/5] overflow-hidden border-2 border-black bg-white shadow-[8px_8px_0_#000]"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 80, damping: 18 }}
-          >
-            <Image
-              src={product.imagePath}
-              alt={product.name}
-              fill
-              sizes="(max-width:1024px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-            {product.isFeatured && (
-              <span className="absolute left-4 top-4 border-2 border-black bg-[var(--adisa-clay)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                Featured
-              </span>
-            )}
-          </motion.div>
+          {/* image carousel */}
+          <ImageCarousel
+            key={product.slug}
+            images={[product.imagePath, ...product.extraImages]}
+            alt={product.name}
+            featured={product.isFeatured}
+            intervalMs={4500}
+          />
 
           {/* info */}
           <motion.div
