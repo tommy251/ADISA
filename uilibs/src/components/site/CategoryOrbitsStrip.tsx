@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Marquee } from "@/components/ui/marquee";
+import { categoryLabel } from "@/lib/products";
 import type { Product, ProductCategory } from "@/lib/types";
 
 /**
@@ -14,11 +15,9 @@ import type { Product, ProductCategory } from "@/lib/types";
 export function CategoryOrbitsStrip({
   products,
   categories,
-  labelFor,
 }: {
   products: Product[];
   categories: ProductCategory[];
-  labelFor: (c: ProductCategory) => string;
 }) {
   return (
     <div className="space-y-10">
