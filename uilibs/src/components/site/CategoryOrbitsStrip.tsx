@@ -6,6 +6,7 @@ import { Marquee } from "@/components/ui/marquee";
 import { categoryLabel } from "@/lib/products";
 import type { Product, ProductCategory } from "@/lib/types";
 
+
 /**
  * Categories strip — for each category, auto-scrolls EVERY image
  * (imagePath + extraImages) of EVERY product in that category, in one
@@ -40,7 +41,7 @@ export function CategoryOrbitsStrip({
             >
               <h3 className="font-head text-2xl font-extrabold sm:text-3xl">
                 <span className="text-[var(--adisa-clay)]">#</span>{" "}
-                {labelFor(cat)}
+                {categoryLabel(cat)}
               </h3>
               <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground group-hover:text-[var(--adisa-clay)]">
                 See all →
@@ -63,7 +64,7 @@ export function CategoryOrbitsStrip({
                   >
                     <Image
                       src={src}
-                      alt={`${labelFor(cat)} style ${i + 1}`}
+                      alt={`${categoryLabel(cat)} style ${i + 1}`}
                       fill
                       sizes="160px"
                       // object-contain preserves every image's natural shape instead of cropping.

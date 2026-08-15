@@ -163,7 +163,6 @@ export default async function HomePage() {
           <CategoryOrbitsStrip
             products={all}
             categories={[...HERO_CATEGORIES]}
-            labelFor={categoryLabel}
           />
         </div>
       </section>
