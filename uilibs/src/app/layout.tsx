@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SiteShell } from "@/components/site/SiteShell";
+import AdisaPreloader from "@/components/ui/adisa-preloader";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -53,6 +54,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <AdisaPreloader />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

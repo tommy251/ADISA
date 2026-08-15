@@ -1,12 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Truck, ShieldCheck, Tag, Wallet, Star } from "lucide-react";
+import { ArrowRight, ShieldCheck, Star, Tag } from "lucide-react";
 import { getAllProducts, getFeaturedProducts, getProductBySlug, categoryLabel } from "@/lib/catalog";
 import { formatNGN } from "@/lib/pricing";
 import { ProductCard } from "@/components/site/ProductCard";
 import { AnimateOnView } from "@/components/site/AnimateOnView";
 import { Marquee } from "@/components/ui/marquee";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
+import { Tilt } from "@/components/ui/tilt";
+import { HeroParallaxCard } from "@/components/site/HeroParallaxCard";
+import { CategoryOrbitsStrip } from "@/components/site/CategoryOrbitsStrip";
+import { WhyUsFloating } from "@/components/site/WhyUsFloating";
 import ShimmerLink from "@/components/site/ShimmerLink";
 
 // Always fetch fresh from Supabase so admin edits show up immediately.
@@ -96,34 +100,31 @@ export default async function HomePage() {
             </div>
           </AnimateOnView>
 
-          {/* Hero collage of 3 shoes */}
-          <div className="relative grid grid-cols-2 gap-3 sm:gap-4 lg:h-[560px]">
+          {/* Hero collage of 3 shoes — each wrapped in 3D tilt + scroll parallax. */}
+          <div className="relative grid grid-cols-2 gap-3 sm:gap-4 lg:h-[560px]" style={{ perspective: "1200px" }}>
             {heroProducts.map((p, i) => (
-              <Link
-                href={`/shop/${p.slug}`}
+              <Tilt
                 key={p.slug}
-                className={`group relative overflow-hidden border-2 border-black bg-white shadow-[8px_8px_0_#000] transition-transform duration-200 hover:-translate-y-1 ${
-                  i === 0 ? "row-span-2" : ""
-                }`}
+                rotationFactor={8}
+                isRevese
+                springOptions={{ stiffness: 120, damping: 14 }}
+                className={i === 0 ? "row-span-2" : ""}
               >
-                <Image
+                <HeroParallaxCard
+                  href={`/shop/${p.slug}`}
                   src={p.imagePath}
                   alt={p.name}
-                  fill
-                  sizes="(max-width:1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  title={p.name}
+                  subtitle={formatNGN(p.salePrice)}
+                  isLead={i === 0}
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                  <div className="font-head text-sm font-bold text-white">{p.name}</div>
-                  <div className="text-xs text-white/80">{formatNGN(p.salePrice)}</div>
-                </div>
-              </Link>
+              </Tilt>
             ))}
             <ShimmerLink
-              href="/shop?category=formal"
+              href="/shop?category=sneakers"
               className="mt-auto justify-center"
             >
-              See formal shoes →
+              See all sneakers →
             </ShimmerLink>
           </div>
         </div>
@@ -143,7 +144,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ============================ CATEGORIES ============================ */}
+      {/* ============================ CATEGORIES — scrolling orbit of all images ============================ */}
       <section className="border-b-2 border-black py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <AnimateOnView>
@@ -152,35 +153,18 @@ export default async function HomePage() {
                 <AnimatedGradientText className="inline font-head text-sm uppercase tracking-widest">
                   Categories
                 </AnimatedGradientText>
-                <h2 className="mt-2 font-head text-4xl font-extrabold">There is a shoe for every step</h2>
+                <h2 className="mt-2 font-head text-4xl font-extrabold">Every shoe. Every angle. Every step.</h2>
               </div>
               <Link href="/shop" className="hidden border-2 border-black bg-white px-4 py-2 text-sm font-semibold shadow-[3px_3px_0_#000] sm:inline-block">
                 View all →
               </Link>
             </div>
           </AnimateOnView>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {HERO_CATEGORIES.map((cat) => {
-              const sample = all.find((p) => p.category === cat);
-              if (!sample) return null;
-              return (
-                <Link
-                  key={cat}
-                  href={`/shop?category=${cat}`}
-                  className="group flex h-32 flex-col items-center justify-center gap-2 border-2 border-black bg-white shadow-[5px_5px_0_#000] transition hover:-translate-y-1"
-                >
-                  <Image
-                    src={sample.imagePath}
-                    alt={categoryLabel(cat)}
-                    width={56}
-                    height={56}
-                    className="rounded border border-black object-cover transition group-hover:scale-110"
-                  />
-                  <span className="font-head text-sm font-bold uppercase tracking-wide">{categoryLabel(cat)}</span>
-                </Link>
-              );
-            })}
-          </div>
+          <CategoryOrbitsStrip
+            products={all}
+            categories={[...HERO_CATEGORIES]}
+            labelFor={categoryLabel}
+          />
         </div>
       </section>
 
@@ -197,31 +181,24 @@ export default async function HomePage() {
               </Link>
             </div>
           </AnimateOnView>
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4" style={{ perspective: "1000px" }}>
             {featured.map((p, i) => (
-              <ProductCard key={p.slug} product={p} index={i} />
+              <Tilt
+                key={p.slug}
+                rotationFactor={6}
+                isRevese
+                springOptions={{ stiffness: 150, damping: 18 }}
+              >
+                <ProductCard product={p} index={i} />
+              </Tilt>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============================ WHY US BANNER ============================ */}
+      {/* ============================ WHY US BANNER — 3D floating ============================ */}
       <section className="border-y-2 border-black bg-[var(--adisa-ink)] py-16 text-[var(--adisa-bone)]">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-3">
-          {[
-            { icon: Tag,   title: "Fair prices",  body: "Quality men's shoes, priced honestly between ₦20k and ₦35k. Card or crypto." },
-            { icon: Truck, title: "Nationwide",   body: "Insured delivery to all 36 states + FCT, 2–5 working days." },
-            { icon: Wallet, title: "Card & Crypto", body: "Pay with Naira cards through Paystack, or Bitcoin/USDC via Coinbase Commerce." },
-          ].map((c, i) => (
-            <AnimateOnView key={c.title} delay={i * 0.1}>
-              <div className="border-2 border-[var(--adisa-bone)] bg-[var(--adisa-ink)] p-6 shadow-[6px_6px_0_var(--adisa-bone)]">
-                <c.icon className="h-7 w-7 text-[var(--adisa-gold)]" />
-                <h3 className="mt-4 font-head text-xl font-bold">{c.title}</h3>
-                <p className="mt-2 text-sm text-[var(--adisa-bone)]/80">{c.body}</p>
-              </div>
-            </AnimateOnView>
-          ))}
-        </div>
+        <WhyUsFloating />
       </section>
 
       {/* ============================ ALL PRODUCTS MARQUEE ============================ */}
