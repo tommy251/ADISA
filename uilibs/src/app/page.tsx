@@ -14,8 +14,6 @@ import { WhyUsFloating } from "@/components/site/WhyUsFloating";
 import ShimmerLink from "@/components/site/ShimmerLink";
 
 // Always fetch fresh from Supabase so admin edits show up immediately.
-export const dynamic = "force-dynamic";
-
 const HERO_CATEGORIES = ["sneakers", "formal", "boots", "loafers", "sandals", "athletic"] as const;
 
 // Specific shoes for the hero collage, referenced by slug (stable)

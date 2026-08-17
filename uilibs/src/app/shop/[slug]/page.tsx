@@ -1,19 +1,16 @@
 import { notFound } from "next/navigation";
+import type { Product } from "@/lib/types";
 import type { Metadata } from "next";
 import { getProductBySlug, getByCategory } from "@/lib/catalog";
 import { formatNGN } from "@/lib/pricing";
 import ProductDetailClient from "@/components/site/ProductDetailClient";
 
-// Always fetch fresh from Supabase so admin edits (and newly added
-// products) show up immediately without needing a rebuild.
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: "Not found — ADISA" };
 
@@ -28,17 +25,22 @@ export async function generateMetadata({
   };
 }
 
+// Always fetch fresh from Supabase so admin edits (and newly added
+// products) show up immediately without needing a rebuild.
+export const dynamic = "force-dynamic";
+
 export default async function ProductPage({
   params,
-}: PageProps<"/shop/[slug]">) {
-  const { slug } = await params;
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   // related: same category, excluding this item
-  const related = (await getByCategory(product.category))
-    .filter((p) => p.slug !== product.slug)
-    .slice(0, 4);
+  const related = (await getByCategory(product.category)) as Product[];
+  if (!related) notFound();
 
   return <ProductDetailClient productPromise={Promise.resolve({ product, related })} />;
 }

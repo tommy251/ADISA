@@ -6,8 +6,6 @@ import type { ProductCategory } from "@/lib/types";
 import type { Metadata } from "next";
 
 // Always fetch fresh from Supabase so admin edits show up immediately.
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: "Shop all shoes — ADISA ·Àdísà·",
   description: "Browse all 50+ men's shoes curated by ADISA. Sneakers, formal, boots, loafers and sandals delivered across Nigeria.",
