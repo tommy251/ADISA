@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
@@ -10,7 +9,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "ucUiwmlcxllpkmqxqb.supabase.co" },
     ],
   },
-  output: "export",
   experimental: {
     serverActions: { bodySizeLimit: "10mb" },
   },
