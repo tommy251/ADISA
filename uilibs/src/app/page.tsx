@@ -19,7 +19,7 @@ const HERO_CATEGORIES = ["sneakers", "formal", "boots", "loafers", "sandals", "a
 // Specific shoes for the hero collage, referenced by slug (stable)
 // instead of array index (was fragile once data comes from a DB
 // whose row order won't match the old hardcoded array order).
-const HERO_SLUGS = ["adisa-battle-athletic", "adisa-versatile-loafer", "adisa-sports-outdoor"];
+const HERO_SLUGS = ["adisa-classic-runner", "adisa-battle-athletic", "adisa-plover-loafer"];
 
 const TRUST_ITEMS = [
   "Card & Crypto payments",
