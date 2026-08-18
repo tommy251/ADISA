@@ -8,9 +8,9 @@ import ProductDetailClient from "@/components/site/ProductDetailClient";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: "Not found — ADISA" };
 
@@ -32,9 +32,9 @@ export const dynamic = "force-dynamic";
 export default async function ProductPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
