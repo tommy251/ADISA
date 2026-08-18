@@ -51,7 +51,7 @@ export function HeroParallaxCard({
           alt={alt}
           fill
           sizes="(max-width:1024px) 50vw, 25vw"
-          className="object-contain p-2 transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
       </div>
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
