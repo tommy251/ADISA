@@ -48,12 +48,6 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/admin"
-            className="hidden text-sm uppercase tracking-wide text-foreground/60 transition hover:text-foreground md:inline-block"
-          >
-            Admin
-          </Link>
           <button
             type="button"
             aria-label="Open cart"
@@ -100,13 +94,6 @@ export function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <Link
-                href="/admin"
-                onClick={() => setOpen(false)}
-                className="text-base font-semibold uppercase tracking-wide text-foreground/60"
-              >
-                Admin
-              </Link>
               <div className="mt-6 border-t-2 border-black pt-4 text-xs text-muted-foreground">
                 Free delivery to all {NG_STATES.length} states
               </div>
