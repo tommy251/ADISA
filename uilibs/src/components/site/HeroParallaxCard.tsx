@@ -40,7 +40,7 @@ export function HeroParallaxCard({
     <motion.a
       ref={ref}
       href={href}
-      className={`group relative block overflow-hidden border-2 border-black bg-white shadow-[8px_8px_0_#000] transition-transform duration-200 hover:-translate-y-1 ${
+           className={`group relative block h-full w-full overflow-hidden border-2 border-black bg-white shadow-[8px_8px_0_#000] transition-transform duration-200 hover:-translate-y-1 ${
         isLead ? "row-span-2" : ""
       }`}
       style={{ y: yShift, transformStyle: "preserve-3d" }}
