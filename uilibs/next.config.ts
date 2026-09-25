@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "export", // <--- ADD THIS LINE HERE
   images: {
-    unoptimized: true,
+    unoptimized: true, // This is perfect for static sites!
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
