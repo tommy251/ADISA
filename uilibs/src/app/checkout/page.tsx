@@ -26,6 +26,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const items   = useCart((s) => s.items);
   const clear   = useCart((s) => s.clear);
+  
   const subtotal = useMemo(
     () => items.reduce((n, i) => n + i.unitPrice * i.qty, 0),
     [items]
@@ -66,30 +67,65 @@ export default function CheckoutPage() {
     setError("");
     setStatus("submitting");
 
-    try {
-      const endpoint = method === "card" ? "/api/checkout" : "/api/crypto-checkout";
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, items }),
-      });
-      const data = await res.json();
+    if (method === "card") {
+      try {
+        // 1. Dynamically load Paystack inline script
+        const script = document.createElement("script");
+        script.src = "https://js.paystack.co/v1/inline.js";
+        script.async = true;
+        
+        script.onload = () => {
+          // @ts-ignore
+          const handler = (window as any).PaystackPop.setup({
+            key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
+            email: form.email,
+            amount: Math.round(total * 100), // Paystack expects amount in kobo
+            currency: "NGN",
+            ref: `ADISA-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
+            metadata: {
+              custom_fields: [
+                { display_name: "Customer Name", variable_name: "customer_name", value: form.fullName },
+                { display_name: "Phone", variable_name: "phone", value: form.phone },
+                { display_name: "Address", variable_name: "address", value: `${form.address}, ${form.city}, ${form.state}` },
+                { display_name: "Cart Items", variable_name: "cart_items", value: JSON.stringify(items) }
+              ]
+            },
+            callback: function (response: any) {
+              // Payment successful!
+              console.log("Payment successful: ", response.reference);
+              
+              // TODO: If you want to save the order to Supabase, do it here!
+              // Example: await supabase.from('orders').insert({ ref: response.reference, ...form, items })
+              
+              clear(); // Clear the cart
+              setStatus("redirecting");
+              router.push(`/order/${response.reference}`);
+            },
+            onClose: function () {
+              setError("Payment window was closed. Please try again.");
+              setStatus("error");
+              // Cleanup script from head to prevent duplicates
+              const existingScript = document.querySelector('script[src="https://js.paystack.co/v1/inline.js"]');
+              if (existingScript) existingScript.remove();
+            }
+          });
+          handler.openIframe();
+        };
 
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Checkout failed. Try again.");
-      }
+        script.onerror = () => {
+          setError("Failed to load payment gateway. Please check your internet connection.");
+          setStatus("error");
+        };
 
-      setStatus("redirecting");
-      // Both providers return a hosted URL to send the customer to.
-      if (data.redirectUrl) {
-        clear();
-        window.location.href = data.redirectUrl;
-        return;
+        document.head.appendChild(script);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Checkout failed");
+        setStatus("error");
       }
-      // Shouldn't happen, but fall back to a confirmation page.
-      router.push(`/order/${data.ref ?? "pending"}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Checkout failed");
+    } else {
+      // Crypto checkout requires a backend to generate a secure session.
+      // Since this is a static site, we inform the user.
+      setError("Crypto checkout is currently unavailable on this version. Please select 'Card (Naira)' to proceed.");
       setStatus("error");
     }
   }
@@ -127,7 +163,7 @@ export default function CheckoutPage() {
           </Link>
           <h1 className="mt-4 font-head text-4xl font-extrabold sm:text-5xl">Checkout</h1>
           <p className="mt-2 text-sm text-[var(--adisa-bone)]/80">
-            Card via Paystack or crypto via Coinbase Commerce. Insured delivery to {form.state}.
+            Card via Paystack. Insured delivery to {form.state}.
           </p>
         </div>
       </section>
@@ -208,7 +244,7 @@ export default function CheckoutPage() {
                 >
                   {NG_STATES.map((s) => (
                     <option key={s} value={s}>{s}</option>
-                  ))}
+                ))}
                 </select>
               </Field>
             </div>
@@ -237,12 +273,12 @@ export default function CheckoutPage() {
                 onSelect={() => setMethod("crypto")}
                 icon={<Bitcoin className="h-6 w-6" />}
                 title="Crypto"
-                body="BTC, ETH or USDC hosted invoice via Coinbase Commerce."
+                body="Currently unavailable on static hosting. Please use Card."
               />
             </div>
             <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-              <Lock className="h-4 w-4" /> Payments are processed by Paystack or Coinbase Commerce.
-              ADISA never sees or stores your card or wallet details.
+              <Lock className="h-4 w-4" /> Payments are processed securely by Paystack.
+              ADISA never sees or stores your card details.
             </p>
           </fieldset>
         </div>
