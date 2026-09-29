@@ -32,16 +32,35 @@ export function getAdminSupabase(): SupabaseClient {
  * "YOUR-PROJECT-ref.supabase.co" and "YOUR_ANON_KEY" — those should NOT
  * trigger the Supabase code path. We check for both presence and validity.
  */
+/**
+ * Client-side check: only verifies public keys are present.
+ * Service role key is server-only and won't be available in static builds.
+ */
 export function isSupabaseConfigured(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const service = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !anon || !service) return false;
-  // Reject known placeholder values from .env.local.example.
+  
+  // For client-side (static builds), we only check public keys
+  if (!url || !anon) return false;
+  
+  // Reject known placeholder values from .env.local.example
   if (url.includes("YOUR-PROJECT") || url.includes("YOUR_PROJECT")) return false;
   if (url.includes("example.supabase.co")) return false;
-  if (anon === "YOUR_ANON_KEY" || service === "YOUR_SERVICE_ROLE_KEY") return false;
-  // Must look like a real https URL.
+  if (anon === "YOUR_ANON_KEY") return false;
+  
+  // Must look like a real https URL
   if (!/^https:\/\/[a-z0-9-]+\.supabase\.(co|in|com)$/i.test(url)) return false;
+  
   return true;
+}
+
+/**
+ * Server-side check: verifies all keys including service role.
+ * Only use this in API routes or server components.
+ */
+export function isSupabaseFullyConfigured(): boolean {
+  const service = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!service) return false;
+  if (service === "YOUR_SERVICE_ROLE_KEY") return false;
+  return isSupabaseConfigured();
 }
