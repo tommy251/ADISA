@@ -16,19 +16,20 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setStatus("submitting");
     setError("");
-    try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Login failed");
-      }
+
+    // Add a tiny delay so the loading animation feels natural
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    // Check credentials directly from the environment variables
+    const envUser = process.env.NEXT_PUBLIC_ADMIN_USERNAME;
+    const envPass = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+
+    if (username === envUser && password === envPass) {
+      // Save a session flag so the dashboard knows you are logged in
+      sessionStorage.setItem("adisa_admin_auth", "true");
       router.push("/admin/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+    } else {
+      setError("Invalid username or password.");
       setStatus("error");
     }
   }
@@ -41,9 +42,9 @@ export default function AdminLoginPage() {
             <ArrowLeft className="h-4 w-4" /> Back to store
           </Link>
           <h1 className="mt-4 font-head text-4xl font-extrabold sm:text-5xl">Admin login</h1>
+          {/* Removed the ugly .env.local text and replaced it with a clean subtitle */}
           <p className="mt-2 text-sm text-[var(--adisa-bone)]/80">
-            Shared-secret login. Set <code className="font-mono">ADMIN_USERNAME</code> /
-            <code className="font-mono"> ADMIN_PASSWORD</code> in <code className="font-mono">.env.local</code>.
+            Sign in to manage your store, orders, and products.
           </p>
         </div>
       </section>

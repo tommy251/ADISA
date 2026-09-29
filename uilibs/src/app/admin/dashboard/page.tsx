@@ -11,6 +11,7 @@ import { formatNGN } from "@/lib/pricing";
 import type { Order, Product } from "@/lib/types";
 import { ProductsAdmin } from "./ProductsAdmin";
 import { OrdersAdmin } from "./OrdersAdmin";
+import { getPublicSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
 type Tab = "overview" | "orders" | "products";
 
@@ -34,28 +35,31 @@ export default function AdminDashboard() {
 
   // ---------- auth guard ----------
   useEffect(() => {
-    // Quickly hit a protected endpoint to test the cookie.
-    fetch("/api/admin/orders?limit=1")
-      .then((r) => {
-        if (r.status === 401) {
-          router.replace("/admin");
-          return null;
-        }
-        setReady(true);
-        return null;
-      })
-      .catch(() => router.replace("/admin"));
+    if (sessionStorage.getItem("adisa_admin_auth") !== "true") {
+      router.replace("/admin");
+    } else {
+      setReady(true);
+    }
   }, [router]);
 
   // ---------- orders ----------
   const loadOrders = useCallback(async () => {
+    if (!isSupabaseConfigured()) {
+      setErr("Supabase is not configured. Check your .env.local file.");
+      return;
+    }
     setLoadingOrders(true);
     setErr("");
     try {
-      const res = await fetch("/api/admin/orders?limit=100");
-      const data = await res.json();
-      if (data.ok) setOrders(data.items);
-      else setErr(data.error || "Failed to load orders");
+      const supabase = getPublicSupabase();
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("createdAt", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      setOrders(data || []);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Failed to load orders");
     } finally {
@@ -65,13 +69,21 @@ export default function AdminDashboard() {
 
   // ---------- products ----------
   const loadProducts = useCallback(async () => {
+    if (!isSupabaseConfigured()) {
+      setErr("Supabase is not configured. Check your .env.local file.");
+      return;
+    }
     setLoadingProducts(true);
     setErr("");
     try {
-      const res = await fetch("/api/admin/products");
-      const data = await res.json();
-      if (data.ok) setProducts(data.items);
-      else setErr(data.error || "Failed to load products");
+      const supabase = getPublicSupabase();
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("createdAt", { ascending: false });
+
+      if (error) throw error;
+      setProducts(data || []);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Failed to load products");
     } finally {
@@ -79,27 +91,13 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  // ---------- auth guard + initial load ----------
-  // Hits a protected endpoint, then kicks off the data loads. All
-  // setState happens in async callbacks (after `await`) so React's
-  // `set-state-in-effect` lint stays happy.
+  // ---------- initial load ----------
   useEffect(() => {
-    let cancelled = false;
-    fetch("/api/admin/orders?limit=1")
-      .then(async (r) => {
-        if (cancelled) return;
-        if (r.status === 401) {
-          router.replace("/admin");
-          return;
-        }
-        setReady(true);
-        await Promise.all([loadOrders(), loadProducts()]);
-      })
-      .catch(() => {
-        if (!cancelled) router.replace("/admin");
-      });
-    return () => { cancelled = true; };
-  }, [router, loadOrders, loadProducts]);
+    if (ready) {
+      loadOrders();
+      loadProducts();
+    }
+  }, [ready, loadOrders, loadProducts]);
 
   // ---------- stats ----------
   const stats: Stats = {
@@ -108,12 +106,12 @@ export default function AdminDashboard() {
     pendingOrders: orders.filter((o) => o.paymentStatus === "pending").length,
     revenue: orders
       .filter((o) => o.paymentStatus === "paid")
-      .reduce((n, o) => n + o.total, 0),
+      .reduce((n, o) => Number(n) + Number(o.total || 0), 0),
     products: products.length,
   };
 
-  async function logout() {
-    await fetch("/api/admin/logout", { method: "POST" });
+  function logout() {
+    sessionStorage.removeItem("adisa_admin_auth");
     router.replace("/admin");
   }
 
@@ -224,17 +222,14 @@ export default function AdminDashboard() {
   );
 }
 
-function TabButton({
-  label, active, onClick,
-}: { label: string; active: boolean; onClick: () => void }) {
+// ... (Keep the TabButton, Overview, StatCard, and Badge components exactly as they were in your file)
+function TabButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={`border-b-[3px] px-4 py-3 text-sm font-semibold transition ${
-        active
-          ? "border-[var(--adisa-clay)] text-[var(--adisa-ink)]"
-          : "border-transparent text-muted-foreground hover:text-foreground"
+        active ? "border-[var(--adisa-clay)] text-[var(--adisa-ink)]" : "border-transparent text-muted-foreground hover:text-foreground"
       }`}
     >
       {label}
@@ -242,49 +237,22 @@ function TabButton({
   );
 }
 
-function Overview({
-  stats, orders, products,
-}: { stats: Stats; orders: Order[]; products: Product[] }) {
-  const recent = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
+function Overview({ stats, orders, products }: { stats: Stats; orders: Order[]; products: Product[] }) {
+  const recent = [...orders].sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || "")).slice(0, 5);
   const lowStock = products.filter((p) => !p.inStock).length;
 
   return (
     <div className="space-y-8">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          icon={<ShoppingCart className="h-5 w-5" />}
-          label="Total orders"
-          value={String(stats.totalOrders)}
-          tone="ink"
-        />
-        <StatCard
-          icon={<Banknote className="h-5 w-5" />}
-          label="Paid revenue"
-          value={formatNGN(stats.revenue)}
-          tone="green"
-          sub={`${stats.paidOrders} paid · ${stats.pendingOrders} pending`}
-        />
-        <StatCard
-          icon={<Package className="h-5 w-5" />}
-          label="Products"
-          value={String(stats.products)}
-          tone="clay"
-          sub={lowStock > 0 ? `${lowStock} out of stock` : "all in stock"}
-        />
-        <StatCard
-          icon={<TrendingUp className="h-5 w-5" />}
-          label="Avg. order"
-          value={stats.paidOrders ? formatNGN(Math.round(stats.revenue / stats.paidOrders)) : "—"}
-          tone="gold"
-        />
+        <StatCard icon={<ShoppingCart className="h-5 w-5" />} label="Total orders" value={String(stats.totalOrders)} tone="ink" />
+        <StatCard icon={<Banknote className="h-5 w-5" />} label="Paid revenue" value={formatNGN(stats.revenue)} tone="green" sub={`${stats.paidOrders} paid · ${stats.pendingOrders} pending`} />
+        <StatCard icon={<Package className="h-5 w-5" />} label="Products" value={String(stats.products)} tone="clay" sub={lowStock > 0 ? `${lowStock} out of stock` : "all in stock"} />
+        <StatCard icon={<TrendingUp className="h-5 w-5" />} label="Avg. order" value={stats.paidOrders ? formatNGN(Math.round(stats.revenue / stats.paidOrders)) : "—"} tone="gold" />
       </div>
-
       <div className="border-2 border-black bg-white p-5 shadow-[6px_6px_0_#000]">
         <h3 className="font-head text-lg font-extrabold">Recent orders</h3>
         {recent.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">
-            No orders yet. Make a test checkout to see them appear here.
-          </p>
+          <p className="mt-3 text-sm text-muted-foreground">No orders yet. Make a test checkout to see them appear here.</p>
         ) : (
           <ul className="mt-3 divide-y divide-black/10 text-sm">
             {recent.map((o) => (
@@ -292,10 +260,7 @@ function Overview({
                 <span className="font-mono text-xs">{o.ref}</span>
                 <span className="font-semibold">{formatNGN(o.total)}</span>
                 <span className="text-xs text-muted-foreground">{o.customerName}</span>
-                <Badge
-                  text={o.paymentStatus === "paid" ? "Paid" : "Pending"}
-                  tone={o.paymentStatus === "paid" ? "green" : "gold"}
-                />
+                <Badge text={o.paymentStatus === "paid" ? "Paid" : "Pending"} tone={o.paymentStatus === "paid" ? "green" : "gold"} />
                 <Badge text={o.fulfillmentStatus} tone="ink" />
               </li>
             ))}
@@ -306,20 +271,12 @@ function Overview({
   );
 }
 
-function StatCard({
-  icon, label, value, sub, tone,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  sub?: string;
-  tone: "ink" | "green" | "clay" | "gold";
-}) {
+function StatCard({ icon, label, value, sub, tone }: { icon: React.ReactNode; label: string; value: string; sub?: string; tone: "ink" | "green" | "clay" | "gold" }) {
   const tones = {
-    ink:   "bg-[var(--adisa-ink)] text-[var(--adisa-bone)]",
+    ink: "bg-[var(--adisa-ink)] text-[var(--adisa-bone)]",
     green: "bg-white border-2 border-black shadow-[4px_4px_0_#000]",
-    clay:  "bg-[var(--adisa-clay)] text-white border-2 border-black shadow-[4px_4px_0_#000]",
-    gold:  "bg-[var(--adisa-gold)] text-white border-2 border-black shadow-[4px_4px_0_#000]",
+    clay: "bg-[var(--adisa-clay)] text-white border-2 border-black shadow-[4px_4px_0_#000]",
+    gold: "bg-[var(--adisa-gold)] text-white border-2 border-black shadow-[4px_4px_0_#000]",
   } as const;
   return (
     <div className={`p-4 ${tones[tone]}`}>
@@ -334,15 +291,6 @@ function StatCard({
 }
 
 function Badge({ text, tone }: { text: string; tone: "green" | "gold" | "ink" }) {
-  const tones = {
-    green: "bg-[var(--adisa-green)] text-white",
-    gold:  "bg-[var(--adisa-gold)] text-white",
-    ink:   "bg-[var(--adisa-ink)] text-[var(--adisa-bone)]",
-  } as const;
-  const t = tones[tone];
-  return (
-    <span className={`px-2 py-0.5 text-[11px] font-semibold uppercase tracking-widest ${t}`}>
-      {text}
-    </span>
-  );
+  const tones = { green: "bg-[var(--adisa-green)] text-white", gold: "bg-[var(--adisa-gold)] text-white", ink: "bg-[var(--adisa-ink)] text-[var(--adisa-bone)]" } as const;
+  return <span className={`px-2 py-0.5 text-[11px] font-semibold uppercase tracking-widest ${tones[tone]}`}>{text}</span>;
 }
