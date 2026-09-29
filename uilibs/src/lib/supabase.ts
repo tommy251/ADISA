@@ -42,6 +42,6 @@ export function isSupabaseConfigured(): boolean {
   if (url.includes("example.supabase.co")) return false;
   if (anon === "YOUR_ANON_KEY" || service === "YOUR_SERVICE_ROLE_KEY") return false;
   // Must look like a real https URL.
-  if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)) return false;
+  if (!/^https:\/\/[a-z0-9-]+\.supabase\.(co|in|com)$/i.test(url)) return false;
   return true;
 }
