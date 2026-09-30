@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Loader2, Plus, Pencil, Trash2, X, Save } from "lucide-react";
 import { formatNGN } from "@/lib/pricing";
 import type { Product, ProductCategory } from "@/lib/types";
-import { getPublicSupabase } from "@/lib/supabase";
+import { getPublicSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
 const CATEGORIES: ProductCategory[] = [
   "sneakers", "formal", "boots", "loafers", "sandals", "athletic",
@@ -40,39 +40,85 @@ export function ProductsAdmin({
 }) {
   const [editing, setEditing] = useState<Product | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState("");
 
   async function save(p: Product) {
+    if (!isSupabaseConfigured()) {
+      throw new Error("Supabase is not configured");
+    }
+
     const supabase = getPublicSupabase();
-    let error;
     
-    // Prepare payload: remove empty ID so Supabase can generate it for new products
-    const payload = { ...p };
-    if (!payload.id) {
-      delete (payload as any).id;
+    try {
+      if (p.slug && p.slug !== "") {
+        // Update existing product
+        console.log("Updating product:", p.slug);
+        const { error } = await supabase
+          .from("products")
+          .update({
+            name: p.name,
+            brand: p.brand,
+            description: p.description,
+            imagePath: p.imagePath,
+            extraImages: p.extraImages,
+            sourcePrice: p.sourcePrice,
+            salePrice: p.salePrice,
+            currency: p.currency,
+            sizesUk: p.sizesUk,
+            colors: p.colors,
+            category: p.category,
+            rating: p.rating,
+            reviews: p.reviews,
+            isFeatured: p.isFeatured,
+            inStock: p.inStock,
+          })
+          .eq("slug", p.slug);
+          
+        if (error) throw error;
+      } else {
+        // Insert new product
+        console.log("Inserting new product:", p.name);
+        const { error } = await supabase
+          .from("products")
+          .insert({
+            name: p.name,
+            slug: p.slug || p.name.toLowerCase().replace(/\s+/g, "-"),
+            brand: p.brand,
+            description: p.description,
+            imagePath: p.imagePath,
+            extraImages: p.extraImages,
+            sourcePrice: p.sourcePrice,
+            salePrice: p.salePrice,
+            currency: p.currency,
+            sizesUk: p.sizesUk,
+            colors: p.colors,
+            category: p.category,
+            rating: p.rating,
+            reviews: p.reviews,
+            isFeatured: p.isFeatured,
+            inStock: p.inStock,
+          });
+          
+        if (error) throw error;
+      }
+      
+      setEditing(null);
+      setSaveError("");
+      onSaved();
+    } catch (error: any) {
+      console.error("Save error:", error);
+      throw new Error(error.message || "Save failed");
     }
-
-    if (editing?.slug) {
-      // Update existing product
-      const { error: updateError } = await supabase
-        .from("products")
-        .update(payload)
-        .eq("slug", editing.slug);
-      error = updateError;
-    } else {
-      // Insert new product
-      const { error: insertError } = await supabase
-        .from("products")
-        .insert(payload);
-      error = insertError;
-    }
-
-    if (error) throw new Error(error.message || "Save failed");
-    setEditing(null);
-    onSaved();
   }
 
   async function remove(slug: string) {
     if (!confirm(`Delete "${slug}"? This cannot be undone.`)) return;
+    
+    if (!isSupabaseConfigured()) {
+      alert("Supabase is not configured");
+      return;
+    }
+    
     setDeleting(slug);
     try {
       const supabase = getPublicSupabase();
@@ -81,10 +127,11 @@ export function ProductsAdmin({
         .delete()
         .eq("slug", slug);
         
-      if (error) throw new Error(error.message || "Delete failed");
+      if (error) throw error;
       onSaved();
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "Delete failed");
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      alert(error.message || "Delete failed");
     } finally {
       setDeleting(null);
     }
@@ -95,12 +142,21 @@ export function ProductsAdmin({
       <div className="flex items-center justify-end">
         <button
           type="button"
-          onClick={() => setEditing({ ...EMPTY })}
+          onClick={() => {
+            console.log("Opening new product editor");
+            setEditing({ ...EMPTY });
+          }}
           className="inline-flex items-center gap-2 border-2 border-black bg-[var(--adisa-ink)] px-4 py-2 text-sm font-semibold text-white shadow-[4px_4px_0_#000]"
         >
           <Plus className="h-4 w-4" /> Add product
         </button>
       </div>
+
+      {saveError && (
+        <div className="border-2 border-[var(--adisa-clay)] bg-[var(--adisa-clay)]/5 px-4 py-3 text-sm text-[var(--adisa-clay)]">
+          {saveError}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -183,7 +239,10 @@ export function ProductsAdmin({
         <ProductEditor
           initial={editing}
           isNew={!editing.slug || editing.slug === ""}
-          onClose={() => setEditing(null)}
+          onClose={() => {
+            setEditing(null);
+            setSaveError("");
+          }}
           onSave={save}
         />
       )}
@@ -218,8 +277,8 @@ function ProductEditor({
     setErr("");
     try {
       await onSave(p);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Save failed");
+    } catch (e: any) {
+      setErr(e.message || "Save failed");
     } finally {
       setBusy(false);
     }
