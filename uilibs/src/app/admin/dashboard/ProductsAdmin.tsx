@@ -48,7 +48,7 @@ export function ProductsAdmin({
     const allImages = [...(p.extraImages || []), ...newImageUrls];
     const mainImage = allImages.length > 0 ? allImages[0] : p.imagePath;
 
-    const payload = {
+    const payload: any = {
       name: p.name,
       brand: p.brand,
       description: p.description,
