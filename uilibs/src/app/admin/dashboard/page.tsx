@@ -27,8 +27,8 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [tab, setTab] = useState<Tab>("overview");
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [err, setErr] = useState("");
@@ -45,22 +45,35 @@ export default function AdminDashboard() {
   // ---------- orders ----------
   const loadOrders = useCallback(async () => {
     if (!isSupabaseConfigured()) {
-      setErr("Supabase is not configured. Check your .env.local file.");
+      setErr("Supabase is not configured. Check your environment variables.");
       return;
     }
     setLoadingOrders(true);
     setErr("");
     try {
       const supabase = getPublicSupabase();
+      
+      // Fetch without database-level ordering to avoid column name mismatches
       const { data, error } = await supabase
         .from("orders")
         .select("*")
-        .order("createdAt", { ascending: false })
         .limit(100);
 
-      if (error) throw error;
-      setOrders(data || []);
+      if (error) {
+        console.error("Supabase orders error:", error);
+        throw error;
+      }
+
+      // Sort safely in JavaScript, handling both camelCase and snake_case
+      const sorted = (data || []).sort((a: any, b: any) => {
+        const dateA = a.created_at || a.createdAt || a.date || "";
+        const dateB = b.created_at || b.createdAt || b.date || "";
+        return String(dateB).localeCompare(String(dateA));
+      });
+
+      setOrders(sorted);
     } catch (e) {
+      console.error("Load orders error:", e);
       setErr(e instanceof Error ? e.message : "Failed to load orders");
     } finally {
       setLoadingOrders(false);
@@ -70,21 +83,26 @@ export default function AdminDashboard() {
   // ---------- products ----------
   const loadProducts = useCallback(async () => {
     if (!isSupabaseConfigured()) {
-      setErr("Supabase is not configured. Check your .env.local file.");
+      setErr("Supabase is not configured. Check your environment variables.");
       return;
     }
     setLoadingProducts(true);
     setErr("");
     try {
       const supabase = getPublicSupabase();
+      
+      // Fetch without database-level ordering
       const { data, error } = await supabase
         .from("products")
-        .select("*")
-        .order("createdAt", { ascending: false });
+        .select("*");
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase products error:", error);
+        throw error;
+      }
       setProducts(data || []);
     } catch (e) {
+      console.error("Load products error:", e);
       setErr(e instanceof Error ? e.message : "Failed to load products");
     } finally {
       setLoadingProducts(false);
@@ -102,11 +120,16 @@ export default function AdminDashboard() {
   // ---------- stats ----------
   const stats: Stats = {
     totalOrders: orders.length,
-    paidOrders: orders.filter((o) => o.paymentStatus === "paid").length,
-    pendingOrders: orders.filter((o) => o.paymentStatus === "pending").length,
+    // Handle both snake_case and camelCase for payment status
+    paidOrders: orders.filter((o: any) => 
+      o.payment_status === "paid" || o.paymentStatus === "paid"
+    ).length,
+    pendingOrders: orders.filter((o: any) => 
+      o.payment_status === "pending" || o.paymentStatus === "pending"
+    ).length,
     revenue: orders
-      .filter((o) => o.paymentStatus === "paid")
-      .reduce((n, o) => Number(n) + Number(o.total || 0), 0),
+      .filter((o: any) => o.payment_status === "paid" || o.paymentStatus === "paid")
+      .reduce((n: number, o: any) => Number(n) + Number(o.total || 0), 0),
     products: products.length,
   };
 
@@ -222,7 +245,6 @@ export default function AdminDashboard() {
   );
 }
 
-// ... (Keep the TabButton, Overview, StatCard, and Badge components exactly as they were in your file)
 function TabButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
@@ -237,9 +259,15 @@ function TabButton({ label, active, onClick }: { label: string; active: boolean;
   );
 }
 
-function Overview({ stats, orders, products }: { stats: Stats; orders: Order[]; products: Product[] }) {
-  const recent = [...orders].sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || "")).slice(0, 5);
-  const lowStock = products.filter((p) => !p.inStock).length;
+function Overview({ stats, orders, products }: { stats: Stats; orders: any[]; products: any[] }) {
+  // Sort safely in JavaScript, handling both camelCase and snake_case
+  const recent = [...orders].sort((a, b) => {
+    const dateA = a.created_at || a.createdAt || a.date || "";
+    const dateB = b.created_at || b.createdAt || b.date || "";
+    return String(dateB).localeCompare(String(dateA));
+  }).slice(0, 5);
+  
+  const lowStock = products.filter((p: any) => !p.inStock).length;
 
   return (
     <div className="space-y-8">
@@ -255,13 +283,13 @@ function Overview({ stats, orders, products }: { stats: Stats; orders: Order[]; 
           <p className="mt-3 text-sm text-muted-foreground">No orders yet. Make a test checkout to see them appear here.</p>
         ) : (
           <ul className="mt-3 divide-y divide-black/10 text-sm">
-            {recent.map((o) => (
+            {recent.map((o: any) => (
               <li key={o.ref} className="flex flex-wrap items-center justify-between gap-2 py-2">
                 <span className="font-mono text-xs">{o.ref}</span>
                 <span className="font-semibold">{formatNGN(o.total)}</span>
-                <span className="text-xs text-muted-foreground">{o.customerName}</span>
-                <Badge text={o.paymentStatus === "paid" ? "Paid" : "Pending"} tone={o.paymentStatus === "paid" ? "green" : "gold"} />
-                <Badge text={o.fulfillmentStatus} tone="ink" />
+                <span className="text-xs text-muted-foreground">{o.customerName || o.customer_name}</span>
+                <Badge text={(o.payment_status || o.paymentStatus) === "paid" ? "Paid" : "Pending"} tone={(o.payment_status || o.paymentStatus) === "paid" ? "green" : "gold"} />
+                <Badge text={o.fulfillment_status || o.fulfillmentStatus || "Pending"} tone="ink" />
               </li>
             ))}
           </ul>
