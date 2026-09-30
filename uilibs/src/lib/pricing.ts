@@ -33,6 +33,13 @@ export function convertToAdisaPrice(source: number): number {
   }
 }
 
-export function formatNGN(n: number): string {
-  return "₦" + n.toLocaleString("en-NG");
+export function formatNGN(amount: number | null | undefined): string {
+  // Handle null/undefined/NaN values safely
+  const num = Number(amount) || 0;
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(num);
 }
