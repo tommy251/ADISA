@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Loader2, Plus, Pencil, Trash2, X, Save } from "lucide-react";
 import { formatNGN } from "@/lib/pricing";
 import type { Product, ProductCategory } from "@/lib/types";
+import { getPublicSupabase } from "@/lib/supabase";
 
 const CATEGORIES: ProductCategory[] = [
   "sneakers", "formal", "boots", "loafers", "sandals", "athletic",
@@ -41,17 +42,31 @@ export function ProductsAdmin({
   const [deleting, setDeleting] = useState<string | null>(null);
 
   async function save(p: Product) {
-    const path = editing?.slug
-      ? `/api/admin/products/${encodeURIComponent(editing.slug)}`
-      : "/api/admin/products";
-    const method = editing?.slug ? "PATCH" : "POST";
-    const res = await fetch(path, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(p),
-    });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || "Save failed");
+    const supabase = getPublicSupabase();
+    let error;
+    
+    // Prepare payload: remove empty ID so Supabase can generate it for new products
+    const payload = { ...p };
+    if (!payload.id) {
+      delete (payload as any).id;
+    }
+
+    if (editing?.slug) {
+      // Update existing product
+      const { error: updateError } = await supabase
+        .from("products")
+        .update(payload)
+        .eq("slug", editing.slug);
+      error = updateError;
+    } else {
+      // Insert new product
+      const { error: insertError } = await supabase
+        .from("products")
+        .insert(payload);
+      error = insertError;
+    }
+
+    if (error) throw new Error(error.message || "Save failed");
     setEditing(null);
     onSaved();
   }
@@ -60,12 +75,16 @@ export function ProductsAdmin({
     if (!confirm(`Delete "${slug}"? This cannot be undone.`)) return;
     setDeleting(slug);
     try {
-      const res = await fetch(`/api/admin/products/${encodeURIComponent(slug)}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || "Delete failed");
+      const supabase = getPublicSupabase();
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("slug", slug);
+        
+      if (error) throw new Error(error.message || "Delete failed");
       onSaved();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Delete failed");
     } finally {
       setDeleting(null);
     }
@@ -240,7 +259,7 @@ function ProductEditor({
           </label>
           <label className="block text-sm sm:col-span-2">
             <span className="font-head text-xs uppercase tracking-widest text-muted-foreground">Image path</span>
-            <input value={p.imagePath} onChange={(e) => set("imagePath", e.target.value)} placeholder="/shoes/file.png" className={`${inputCls} mt-1`} />
+            <input value={p.imagePath} onChange={(e) => set("imagePath", e.target.value)} placeholder="/products/adisa-shoe/01.png" className={`${inputCls} mt-1`} />
           </label>
           <label className="block text-sm">
             <span className="font-head text-xs uppercase tracking-widest text-muted-foreground">Category</span>
