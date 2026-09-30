@@ -34,7 +34,6 @@ export function convertToAdisaPrice(source: number): number {
 }
 
 export function formatNGN(amount: number | null | undefined): string {
-  // Handle null/undefined/NaN values safely
   const num = Number(amount) || 0;
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
