@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Loader2, Plus, Pencil, Trash2, X, Save } from "lucide-react";
 import { formatNGN } from "@/lib/pricing";
@@ -34,15 +34,15 @@ const EMPTY: Product = {
 export function ProductsAdmin({
   products, loading, onSaved,
 }: {
-  products: Product[];
+  products: any[];
   loading: boolean;
   onSaved: () => void;
 }) {
-  const [editing, setEditing] = useState<Product | null>(null);
+  const [editing, setEditing] = useState<any>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [saveError, setSaveError] = useState("");
 
-  async function save(p: Product) {
+  async function save(p: any) {
     if (!isSupabaseConfigured()) {
       throw new Error("Supabase is not configured");
     }
@@ -52,7 +52,6 @@ export function ProductsAdmin({
     try {
       if (p.slug && p.slug !== "") {
         // Update existing product
-        console.log("Updating product:", p.slug);
         const { error } = await supabase
           .from("products")
           .update({
@@ -60,15 +59,12 @@ export function ProductsAdmin({
             brand: p.brand,
             description: p.description,
             imagePath: p.imagePath,
-            extraImages: p.extraImages,
-            sourcePrice: p.sourcePrice,
-            salePrice: p.salePrice,
+            sourcePrice: Number(p.sourcePrice) || 0,
+            salePrice: Number(p.salePrice) || 0,
             currency: p.currency,
             sizesUk: p.sizesUk,
             colors: p.colors,
             category: p.category,
-            rating: p.rating,
-            reviews: p.reviews,
             isFeatured: p.isFeatured,
             inStock: p.inStock,
           })
@@ -77,7 +73,6 @@ export function ProductsAdmin({
         if (error) throw error;
       } else {
         // Insert new product
-        console.log("Inserting new product:", p.name);
         const { error } = await supabase
           .from("products")
           .insert({
@@ -86,15 +81,12 @@ export function ProductsAdmin({
             brand: p.brand,
             description: p.description,
             imagePath: p.imagePath,
-            extraImages: p.extraImages,
-            sourcePrice: p.sourcePrice,
-            salePrice: p.salePrice,
+            sourcePrice: Number(p.sourcePrice) || 0,
+            salePrice: Number(p.salePrice) || 0,
             currency: p.currency,
             sizesUk: p.sizesUk,
             colors: p.colors,
             category: p.category,
-            rating: p.rating,
-            reviews: p.reviews,
             isFeatured: p.isFeatured,
             inStock: p.inStock,
           });
@@ -137,15 +129,18 @@ export function ProductsAdmin({
     }
   }
 
+  // Helper to safely format price
+  function safeFormatNGN(value: any): string {
+    const num = Number(value) || 0;
+    return formatNGN(num);
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-end">
         <button
           type="button"
-          onClick={() => {
-            console.log("Opening new product editor");
-            setEditing({ ...EMPTY });
-          }}
+          onClick={() => setEditing({ ...EMPTY })}
           className="inline-flex items-center gap-2 border-2 border-black bg-[var(--adisa-ink)] px-4 py-2 text-sm font-semibold text-white shadow-[4px_4px_0_#000]"
         >
           <Plus className="h-4 w-4" /> Add product
@@ -182,7 +177,7 @@ export function ProductsAdmin({
               </tr>
             </thead>
             <tbody className="divide-y divide-black/10">
-              {products.map((p) => (
+              {products.map((p: any) => (
                 <tr key={p.slug} className="odd:bg-white even:bg-zinc-50">
                   <td className="px-3 py-2">
                     {p.imagePath ? (
@@ -196,8 +191,8 @@ export function ProductsAdmin({
                   <td className="px-3 py-2 font-semibold">{p.name}</td>
                   <td className="hidden px-3 py-2 font-mono text-xs md:table-cell">{p.slug}</td>
                   <td className="px-3 py-2 capitalize">{p.category}</td>
-                  <td className="px-3 py-2 text-right">{formatNGN(p.sourcePrice)}</td>
-                  <td className="px-3 py-2 text-right font-bold">{formatNGN(p.salePrice)}</td>
+                  <td className="px-3 py-2 text-right">{safeFormatNGN(p.sourcePrice)}</td>
+                  <td className="px-3 py-2 text-right font-bold">{safeFormatNGN(p.salePrice)}</td>
                   <td className="px-3 py-2 text-center">
                     {p.inStock ? (
                       <span className="inline-block h-2 w-2 rounded-full bg-[var(--adisa-green)]" />
@@ -208,7 +203,6 @@ export function ProductsAdmin({
                   <td className="px-3 py-2 text-right whitespace-nowrap">
                     <button
                       type="button"
-                      aria-label="Edit"
                       onClick={() => setEditing(p)}
                       className="inline-flex h-8 w-8 items-center justify-center border-2 border-black bg-white shadow-[2px_2px_0_#000] hover:bg-zinc-100"
                     >
@@ -216,7 +210,6 @@ export function ProductsAdmin({
                     </button>
                     <button
                       type="button"
-                      aria-label="Delete"
                       onClick={() => remove(p.slug)}
                       disabled={deleting === p.slug}
                       className="ml-1 inline-flex h-8 w-8 items-center justify-center border-2 border-black bg-white text-[var(--adisa-clay)] shadow-[2px_2px_0_#000] hover:bg-zinc-100 disabled:opacity-60"
@@ -255,17 +248,17 @@ export function ProductsAdmin({
 function ProductEditor({
   initial, isNew, onClose, onSave,
 }: {
-  initial: Product;
+  initial: any;
   isNew: boolean;
   onClose: () => void;
-  onSave: (p: Product) => Promise<void>;
+  onSave: (p: any) => Promise<void>;
 }) {
-  const [p, setP] = useState<Product>(initial);
+  const [p, setP] = useState<any>(initial);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
-  function set<K extends keyof Product>(key: K, value: Product[K]) {
-    setP((prev) => ({ ...prev, [key]: value }));
+  function set<K extends keyof any>(key: K, value: any) {
+    setP((prev: any) => ({ ...prev, [key]: value }));
   }
 
   async function submit() {
@@ -334,17 +327,17 @@ function ProductEditor({
           </label>
           <label className="block text-sm">
             <span className="font-head text-xs uppercase tracking-widest text-muted-foreground">Source price ₦</span>
-            <input type="number" min={0} value={p.sourcePrice} onChange={(e) => set("sourcePrice", Number(e.target.value))} className={`${inputCls} mt-1`} />
+            <input type="number" min={0} value={p.sourcePrice || 0} onChange={(e) => set("sourcePrice", Number(e.target.value))} className={`${inputCls} mt-1`} />
           </label>
           <label className="block text-sm">
             <span className="font-head text-xs uppercase tracking-widest text-muted-foreground">Sale price ₦</span>
-            <input type="number" min={0} value={p.salePrice} onChange={(e) => set("salePrice", Number(e.target.value))} className={`${inputCls} mt-1`} />
+            <input type="number" min={0} value={p.salePrice || 0} onChange={(e) => set("salePrice", Number(e.target.value))} className={`${inputCls} mt-1`} />
           </label>
           <label className="block text-sm sm:col-span-2">
             <span className="font-head text-xs uppercase tracking-widest text-muted-foreground">UK sizes (comma list)</span>
             <input
-              value={p.sizesUk.join(",")}
-              onChange={(e) => set("sizesUk", e.target.value.split(",").map((s) => Number(s.trim())).filter((n) => !Number.isNaN(n)))}
+              value={(p.sizesUk || []).join(",")}
+              onChange={(e) => set("sizesUk", e.target.value.split(",").map((s: string) => Number(s.trim())).filter((n: number) => !Number.isNaN(n)))}
               className={`${inputCls} mt-1`}
               placeholder="6,7,8,9,10,11"
             />
@@ -352,8 +345,8 @@ function ProductEditor({
           <label className="block text-sm sm:col-span-2">
             <span className="font-head text-xs uppercase tracking-widest text-muted-foreground">Colours (comma list)</span>
             <input
-              value={p.colors.join(",")}
-              onChange={(e) => set("colors", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
+              value={(p.colors || []).join(",")}
+              onChange={(e) => set("colors", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))}
               className={`${inputCls} mt-1`}
               placeholder="Black,White"
             />
